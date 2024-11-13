@@ -33,8 +33,8 @@ Gaven Chan
 ### Features
 
 1. << User interface with keyboard interactions with the player>>
-2. << Feature 2 >>
-3. << Feature 3 >>
+2. << Graphics for each phase of the scene >>
+3. << Start menu>>
 4. << Feature 4 >>
 5. << Feature 5 >>
 
