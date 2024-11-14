@@ -2,19 +2,15 @@
 :warning: Everything between << >> needs to be replaced (remove << >> after replacing)
 
 # << Project Title >>
-## CS110 Final Project  << Semester, Year >>
+## CS110 Final Project Fall, 2024
 
 ## Team Members
-
-<< List team member names >>
-Giankyle Vallarta
-Gaven Chan
+Giankyle Vallarta 
+Gaven Chan 
 ***
 
 ## Project Description
-
-<< Give an overview of your project >>
-
+This game will be a stock predictor where it incorporates where it provides you a list and advice for future stock trends and where to put your money in.
 
 ***    
 
@@ -32,11 +28,11 @@ Gaven Chan
 
 ### Features
 
-1. << User interface with keyboard interactions with the player>>
-2. << Graphics for each phase of the scene >>
-3. << Start menu>>
-4. << Feature 4 >>
-5. << Feature 5 >>
+1. User interface with keyboard interactions with the player
+2. Graphics for each phase of the scene 
+3. Start menu
+4. Moveable character that interactive with the whole game
+5. Game over and thank you screen 
 
 ### Classes
 
