@@ -18,7 +18,7 @@ data = yf.download(stock_ticker, start = "2016-01-01", end = today) #This gets t
 
 data = data[['Close']] #We only want to use the closing prices because we need to keep this clean
 data['Previous_Close'] = data['Close'].shift(1) #There is no way of getting the previous days price, so we are essentially going to have to shift the data to the left one
-data['Price_Change'] = data['Close'].melt() - data['Previous_Close'].melt()
+data['Price_Change'] = data['Close'] - data['Previous_Close']
 data['Next_Close'] = data['Close'].shift(-1)
 data.dropna(inplace=True)
 
