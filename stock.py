@@ -23,11 +23,22 @@ data.dropna(inplace=True)#This is to drop any values that don't exist
 
 print(data['Price_Change'])
 
+X = data[['Previous_Close', 'Price_Change']]
+Y = data['Next_Close']
+
 X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size = 0.25, random_state = 42)
 model = LinearRegression()
 model.fit(X_train,Y_train)
 
 y_pred = model.predict(X_test)
+
+
+# Display sample predictions
+print("\nSample Predictions (Actual vs Predicted):")
+comparison = pd.DataFrame({'Actual': Y_test[:10].values, 'Predicted': y_pred[:10]})
+print(comparison)
+
+
 # dat = yf.Ticker("MSFT")
 # hd = dat.info
 # print(hd)
