@@ -26,25 +26,15 @@ print(data['Price_Change'])
 X = data[['Previous_Close', 'Price_Change']]
 Y = data['Next_Close']
 
-X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size = 0.25, random_state = 42)
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size = 0.25) #We can do a new random state
 model = LinearRegression() #This is linear regression basically it is a line of best fit(I will do logistic regression next and then average the two values to get something more accurate)
 model.fit(X_train,Y_train)
 
 y_pred = model.predict(X_test) 
 
-
-# Display sample predictions
 print("\nSample Predictions (Actual vs Predicted):")
 comparison = pd.DataFrame({'Actual': Y_test[:10].values, 'Predicted': y_pred[:10]})
 print(comparison)
-
-
-# dat = yf.Ticker("MSFT")
-# hd = dat.info
-# print(hd)
-
-
-
 
 #Name is going to change later
 
