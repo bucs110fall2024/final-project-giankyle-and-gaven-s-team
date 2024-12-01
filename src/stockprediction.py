@@ -38,6 +38,38 @@ print("\nSample Predictions (Actual vs Predicted):")
 comparison = pd.DataFrame({'Actual': Y_test[:10].values, 'Predicted': y_pred[:10]})
 print(comparison)
 
+future_days = 0  # Number of days to predict
+future_days = int(input("How many days ahead would you predict?"))
+latest_row = data.iloc[-1]
+future_predictions = []
 
+for i in range(future_days):
+    latest_previous_close = latest_row['Present_Close']
+    latest_price_change = latest_row['Present_Close'] - latest_row['Previous_Close']
+    
+    # Prepare input for the model
+    future_input = np.array([[latest_previous_close, latest_price_change]])
+    next_pred = model.predict(future_input)[0]
+    future_predictions.append(next_pred)
+    
+    # Update latest_row for the next prediction
+    latest_row = {
+        'Present_Close': next_pred,
+        'Previous_Close': latest_previous_close
+    }
+
+# Add future predictions to a DataFrame for visualization
+future_dates = pd.date_range(start=data['Date'].iloc[-1] + pd.Timedelta(days=1), periods=future_days)
+future_df = pd.DataFrame({'Date': future_dates, 'Predicted_Close': future_predictions})
+
+# Visualization
+plt.figure(figsize=(10, 6))
+plt.plot(data['Date'], data['Adj Close'], label='Actual Prices', color='blue')
+plt.plot(future_df['Date'], future_df['Predicted_Close'], label='Future Predictions', color='orange', linestyle='--')
+plt.title(f"{stock_ticker} Stock Price Prediction")
+plt.xlabel("Date")
+plt.ylabel("Price")
+plt.legend()
+plt.show()
 
 #Name is going to change later
