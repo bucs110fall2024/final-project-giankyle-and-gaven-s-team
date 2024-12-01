@@ -1,6 +1,8 @@
 import yfinance as yf
 import pandas as pd 
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -35,5 +37,7 @@ y_pred = model.predict(X_test)
 print("\nSample Predictions (Actual vs Predicted):")
 comparison = pd.DataFrame({'Actual': Y_test[:10].values, 'Predicted': y_pred[:10]})
 print(comparison)
+
+
 
 #Name is going to change later
