@@ -37,7 +37,3 @@ comparison = pd.DataFrame({'Actual': Y_test[:10].values, 'Predicted': y_pred[:10
 print(comparison)
 
 #Name is going to change later
-
-
-
-
