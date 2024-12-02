@@ -1,36 +1,36 @@
-class Controller:
+# class Controller:
   
-  def __init__(self):
-    #setup pygame data
+#   def __init__(self):
+#     #setup pygame data
     
-  def mainloop(self):
-    pass
-    #select state loop
+#   def mainloop(self):
+#     pass
+#     #select state loop
     
   
-  ### below are some sample loop states ###
+#   ### below are some sample loop states ###
 
-  def menuloop(self):
-    pass
+#   def menuloop(self):
+#     pass
     
-      #event loop
+#       #event loop
 
-      #update data
+#       #update data
 
-      #redraw
+#       #redraw
       
-  def gameloop(self):
+#   def gameloop(self):
     
-      #event loop
+#       #event loop
 
-      #update data
+#       #update data
 
-      #redraw
+#       #redraw
     
-  def gameoverloop(self):
-      pass
-      #event loop
+#   def gameoverloop(self):
+#       pass
+#       #event loop
 
-      #update data
+#       #update data
 
-      #redraw
+#       #redraw
