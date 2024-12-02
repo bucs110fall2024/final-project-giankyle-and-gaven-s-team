@@ -4,6 +4,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from datetime import datetime
@@ -42,16 +43,19 @@ sorted_stocks = sorted_stocks.sort_values(by="Date", ascending=True)
 print("Top Predictions Sorted by Date (Chronological Order):")
 print(sorted_stocks.head(-10))
 
+
 plt.figure(figsize=(10, 6))
-plt.plot(sorted_stocks['Date'], sorted_stocks['Actual'], label='Actual', marker='o', color='blue')
-plt.plot(sorted_stocks['Date'], sorted_stocks['Predicted'], label='Predicted', marker='x', color='orange')
-plt.title('Actual vs Predicted Stock Prices (Chronologically Ordered)')
+plt.plot(sorted_stocks['Date'], sorted_stocks['Actual'], label='Actual', marker='o', color='black')
+plt.plot(sorted_stocks['Date'], sorted_stocks['Predicted'], label='Predicted', marker='x', color='yellow')
+plt.title(stock_ticker + 'Actual vs Predicted Stock Prices (Chronologically Ordered)')
 plt.xlabel('Date')
 plt.ylabel('Stock Price')
 plt.legend()
 plt.xticks(rotation=45)
 plt.show()
 
+prediction_day = 10
+data['Adj Close'].iloc[-1]
 
 # days_ahead = 0
 # days_ahead = int(input("How many days ahead would you like to predict? Keep in mind that the later you go, the more inaccurate the numbers may be"))
