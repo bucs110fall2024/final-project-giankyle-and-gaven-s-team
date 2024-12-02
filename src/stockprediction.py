@@ -1,13 +1,12 @@
 import yfinance as yf
 import pandas as pd 
-import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
-
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from datetime import datetime
+from datetime import timedelta
+
 
 #It takes some time for everything to load
 today = datetime.today().strftime('%Y-%m-%d')#This is to get the current time
@@ -24,41 +23,76 @@ data['Next_Close'] = data['Adj Close'].shift(-1) #This reads the values that are
 data['Price_Change'] = data['Present_Close']- data['Previous_Close'] #This calculates the price change by subtracting the current close with the previous close
 data.dropna(inplace=True)#This is to drop any values that don't exist
 
-print(data['Price_Change'])
+    #
 
-X = data[['Previous_Close', 'Price_Change']]
-Y = data['Next_Close']
+def model_training(data):   
+    X = data[['Previous_Close', 'Price_Change']]
+    Y = data['Next_Close']
 
-X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size = 0.25) #We can do a new random state
-model = LinearRegression() #This is linear regression basically it is a line of best fit(I will do logistic regression next and then average the two values to get something more accurate)
-model.fit(X_train,Y_train)
-y_pred = model.predict(X_test)
+    X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size = 0.25) #We can do a new random state
+    model = LinearRegression() #This is linear regression basically it is a line of best fit(I will do logistic regression next and then average the two values to get something more accurate)
+    model.fit(X_train,Y_train)
+    y_pred = model.predict(X_test)
+
+    sorted_stocks = pd.DataFrame({'Actual': Y_test, 'Predicted': y_pred})
+    sorted_stocks['Date'] = data.loc[Y_test.index, 'Date']
+
+    sorted_stocks = sorted_stocks.sort_values(by="Date", ascending=True)
+
+    print("Top Predictions Sorted by Date (Chronological Order):")
+    print(sorted_stocks.head(-1))
+    
+    return model, sorted_stocks
 
 
-sorted_stocks = pd.DataFrame({'Actual': Y_test, 'Predicted': y_pred})
-sorted_stocks['Date'] = data.loc[Y_test.index, 'Date']
+# print(type(sorted_stocks))
 
-sorted_stocks = sorted_stocks.sort_values(by="Date", ascending=True)
+def stock_prediction(data, model):
+    forecast_days = int(input("\nEnter the number of days to predict ahead: "))
+    last_close = data['Adj Close'].iloc[-1]
+    forecast_dates = pd.date_range(start=data['Date'].iloc[-1] + timedelta(days=1), periods=forecast_days)
+    forecast_df = pd.DataFrame({'Date': forecast_dates})
+    future_data = pd.DataFrame({
+        'Previous_Close': [last_close] * forecast_days,  
+        'Price_Change': [0] * forecast_days             
+    })
+    future_prices = []
+    for i in range(forecast_days):
+        input_data = future_data.iloc[i:i+1]
+        next_close = model.predict(input_data)[0]  
+        future_prices.append(next_close)  
+        if i + 1 < forecast_days:
+            
+            future_data.at[i + 1, 'Previous_Close'] = next_close
 
-print("Top Predictions Sorted by Date (Chronological Order):")
-print(sorted_stocks.head(-10))
+    forecast_df['Predicted_Close'] = future_prices
+
+    print("\nForecasted Prices:")
+    print(forecast_df)
+    return forecast_df
+
+def plot_machinelearning_model(sorted_stocks, forecast_df=None):
+    plt.figure(figsize=(12, 6))
+    plt.plot(sorted_stocks['Date'], sorted_stocks['Actual'], label='Actual', marker='o', color='black')
+    plt.plot(sorted_stocks['Date'], sorted_stocks['Predicted'], label='Predicted', marker='x', color='yellow')
+    if forecast_df is not None:
+        plt.plot(forecast_df['Date'], forecast_df['Predicted_Close'], label='Forecasted Prices', linestyle='--', color='blue')
+    plt.title(stock_ticker + ' Actual, Predicted, and Forecasted Stock Prices')
+    plt.xlabel('Date')
+    plt.ylabel('Stock Price')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.show()
 
 
-plt.figure(figsize=(10, 6))
-plt.plot(sorted_stocks['Date'], sorted_stocks['Actual'], label='Actual', marker='o', color='black')
-plt.plot(sorted_stocks['Date'], sorted_stocks['Predicted'], label='Predicted', marker='x', color='yellow')
-plt.title(stock_ticker + 'Actual vs Predicted Stock Prices (Chronologically Ordered)')
-plt.xlabel('Date')
-plt.ylabel('Stock Price')
-plt.legend()
-plt.xticks(rotation=45)
-plt.show()
+model, sorted_stocks = model_training(data)
 
-prediction_day = 10
-data['Adj Close'].iloc[-1]
+forecast_df = stock_prediction(data, model)
 
-# days_ahead = 0
-# days_ahead = int(input("How many days ahead would you like to predict? Keep in mind that the later you go, the more inaccurate the numbers may be"))
+plot_machinelearning_model(sorted_stocks, forecast_df)
 
+# for i in range(days_ahead):
+    
+    
 
 #Name is going to change later
