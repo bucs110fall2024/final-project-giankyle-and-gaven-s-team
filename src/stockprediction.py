@@ -23,21 +23,21 @@ class stockpredictor:
         print(self.data.columns) #I need this line and the one above to make sure that the self.data is being
         #self.data.to_csv(str(stock_ticker + "_stock_self.data.csv"))
 
-    def stock_info(self, stock_ticker):
-        truth = False
-        while truth == False: 
-            stock_graph_ask = str(input("Would you like to see the graph for " + stock_ticker + "? Yes or No")).upper
-            if stock_graph_ask == "YES":
-                self.data['Adj Close'].plot()
-                plt.title("Apple Stock Prices")
-                plt.show()
-                truth = True
-            elif stock_graph_ask == "NO":
-                truth = True
-                pass
-            else:
-                print("That was not a valid answer.")
-                truth = False
+    # def stock_info(self, stock_ticker):
+    #     truth = False
+    #     while truth == False: 
+    #         stock_graph_ask = str(input("Would you like to see the graph for " + stock_ticker + "? Yes or No")).upper
+    #         if stock_graph_ask == "YES":
+    #             self.data['Adj Close'].plot()
+    #             plt.title("Apple Stock Prices")
+    #             plt.show()
+    #             truth = True
+    #         elif stock_graph_ask == "NO":
+    #             truth = True
+    #             pass
+    #         else:
+    #             print("That was not a valid answer.")
+    #             truth = False
 
 
     def model_training(self):   
