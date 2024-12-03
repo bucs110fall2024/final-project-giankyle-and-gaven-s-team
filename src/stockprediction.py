@@ -23,14 +23,30 @@ class stockpredictor:
         print(self.data.columns) #I need this line and the one above to make sure that the self.data is being
         #self.data.to_csv(str(stock_ticker + "_stock_self.data.csv"))
 
+    # def stock_info(self, stock_ticker):
+    #     truth = False
+    #     while truth == False: 
+    #         stock_graph_ask = str(input("Would you like to see the graph for " + stock_ticker + "? Yes or No")).upper
+    #         if stock_graph_ask == "YES":
+    #             self.data['Adj Close'].plot()
+    #             plt.title("Apple Stock Prices")
+    #             plt.show()
+    #             truth = True
+    #         elif stock_graph_ask == "NO":
+    #             truth = True
+    #             pass
+    #         else:
+    #             print("That was not a valid answer.")
+    #             truth = False
+
+
+    def model_training(self):   
         self.data['Present_Close'] = self.data['Adj Close'] #I had trouble with this because I could not have 'Adj Close' as a column by itself 
         self.data['Previous_Close'] = self.data['Adj Close'].shift(1) #This reads the values that are one above, and then stores them as the 'Previous_Close'
         self.data['Next_Close'] = self.data['Adj Close'].shift(-1) #This reads the values that are one below, and then stores them as the 'Next_Close'
         self.data['Price_Change'] = self.data['Present_Close']- self.data['Previous_Close'] #This calculates the price change by subtracting the current close with the previous close
         self.data.dropna(inplace=True)#This is to drop any values that don't exist
-
-
-    def model_training(self):   
+        
         X = self.data[['Previous_Close', 'Price_Change']]
         Y = self.data['Next_Close']
 
@@ -85,9 +101,6 @@ class stockpredictor:
         plt.xticks(rotation=45)
         plt.show()
 
-
-
-if __name__ == "__main__":
     try:
         stock_ticker = input("Enter the stock ticker that you would like to search up: ").upper()
         predictor = stockpredictor(stock_ticker)

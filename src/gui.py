@@ -158,6 +158,7 @@ def validate_stock_ticker(ticker):
         return not data.empty
     except Exception:
         return False
+    
 
 def validate_forecast_days(days):
     try:
