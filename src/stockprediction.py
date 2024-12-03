@@ -35,24 +35,21 @@ class stockpredictor:
         Y = self.data['Next_Close']
 
         X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size = 0.25) #We can do a new random state
-        model = LinearRegression() #This is linear regression basically it is a line of best fit(I will do logistic regression next and then average the two values to get something more accurate)
-        model.fit(X_train,Y_train)
-        y_pred = model.predict(X_test)
+        self.model = LinearRegression() #This is linear regression basically it is a line of best fit(I will do logistic regression next and then average the two values to get something more accurate)
+        self.model.fit(X_train,Y_train)
+        y_pred = self.model.predict(X_test)
 
-        sorted_stocks = pd.DataFrame({'Actual': Y_test, 'Predicted': y_pred})
-        sorted_stocks['Date'] = self.data.loc[Y_test.index, 'Date']
-
-        sorted_stocks = sorted_stocks.sort_values(by="Date", ascending=True)
+        self.sorted_stocks = pd.DataFrame({'Actual': Y_test, 'Predicted': y_pred})
+        self.sorted_stocks['Date'] = self.data.loc[Y_test.index, 'Date']
+        self.sorted_stocks = self.sorted_stocks.sort_values(by="Date", ascending=True)
 
         print("Top Predictions Sorted by Date (Chronological Order):")
-        print(sorted_stocks.head(-1))
+        print(self.sorted_stocks.head(-1))
         
-        return model, sorted_stocks
 
     # print(type(sorted_stocks))
 
-    def stock_prediction(self):
-        forecast_days = int(input("\nEnter the number of days to predict ahead: "))
+    def stock_prediction(self, forecast_days):
         last_close = self.data['Adj Close'].iloc[-1]
         forecast_dates = pd.date_range(start=self.data['Date'].iloc[-1] + timedelta(days=1), periods=forecast_days)
         forecast_df = pd.DataFrame({'Date': forecast_dates})
@@ -75,18 +72,34 @@ class stockpredictor:
         print(forecast_df)
         return forecast_df
 
-    def plot_machinelearning_model(sorted_stocks, forecast_df=None):
+    def plot_machinelearning_model(self,forecast_df= None,):
         plt.figure(figsize=(12, 6))
-        plt.plot(sorted_stocks['Date'], sorted_stocks['Actual'], label='Actual', marker='o', color='green')
-        plt.plot(sorted_stocks['Date'], sorted_stocks['Predicted'], label='Predicted', marker='o', color='red')
+        plt.plot(self.sorted_stocks['Date'], self.sorted_stocks['Actual'], label='Actual', marker='o', color='green')
+        plt.plot(self.sorted_stocks['Date'], self.sorted_stocks['Predicted'], label='Predicted', marker='o', color='red')
         if forecast_df is not None:
             plt.plot(forecast_df['Date'], forecast_df['Predicted_Close'], label='Forecasted Prices', linestyle='--', color='blue')
-        plt.title(stock_ticker + ' Actual, Predicted, and Forecasted Stock Prices')
+        plt.title(self.stock_ticker + 'Actual, Predicted, and Forecasted Stock Prices')
         plt.xlabel('Date')
         plt.ylabel('Stock Price')
         plt.legend()
         plt.xticks(rotation=45)
         plt.show()
+
+
+
+if __name__ == "__main__":
+    try:
+        stock_ticker = input("Enter the stock ticker that you would like to search up: ").upper()
+        predictor = stockpredictor(stock_ticker)
+        predictor.data_fetch()
+        predictor.model_training()
+        forecast_days = int(input("Enter the number of days to predict ahead: "))
+        forecast_df = predictor.stock_prediction(forecast_days)
+        predictor.plot_machinelearning_model(forecast_df)
+    except ValueError as e:
+        print(f"Value Error: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 # model, sorted_stocks = model_training(self) #THIS IS GOING TO BE SENT OUT LATER ON ***DO NOT DELETE***
