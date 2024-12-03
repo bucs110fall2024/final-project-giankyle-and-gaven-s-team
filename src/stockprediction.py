@@ -85,8 +85,6 @@ class stockpredictor:
         plt.xticks(rotation=45)
         plt.show()
 
-
-
 if __name__ == "__main__":
     try:
         stock_ticker = input("Enter the stock ticker that you would like to search up: ").upper()

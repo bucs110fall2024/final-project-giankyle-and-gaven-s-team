@@ -85,6 +85,7 @@ def validate_stock_ticker(ticker):
         return not data.empty
     except Exception:
         return False
+    
 
 def draw_your_stocks_screen(mouse_pos):
     # draw_centered_text("Your Stocks Screen", title_font, BLACK, screen)
