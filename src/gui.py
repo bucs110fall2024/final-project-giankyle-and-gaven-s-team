@@ -2,7 +2,6 @@ import pygame
 import sys
 import yfinance as yf
 import matplotlib.pyplot as plt
-from stockprediction import stockpredictor  # Import your stock prediction module
 
 pygame.init()
 
@@ -39,6 +38,9 @@ current_question = "stock_ticker"  # 'stock_ticker' or 'forecast_days'
 watchlist = []  # List to store watchlist items
 ticker = None
 forecast_days = None
+selected_stock = None
+selected_days = None
+graph_shown = {}  # Dictionary to track graph shown for each stock
 
 # Button definitions
 def create_button(x, y, width, height):
@@ -46,6 +48,7 @@ def create_button(x, y, width, height):
 
 home_button = create_button(SCREEN_WIDTH - 170, SCREEN_HEIGHT - 70, 150, 50)
 end_button = create_button(20, SCREEN_HEIGHT - 70, 150, 50)
+clear_button = create_button(610, 250, 100, 50)  # Clear button next to the input box
 
 game_button = create_button(0, 0, 200, 50)
 watchlist_button = create_button(0, 0, 200, 50)
@@ -93,12 +96,31 @@ def draw_home_screen(mouse_pos):
 
 def draw_watchlist_screen(mouse_pos):
     draw_centered_text("Watchlist", title_font, WHITE, screen, -200)
+    
     y_offset = 0
-    for i, stock in enumerate(watchlist, start=1):
-        text = f"{i}. {stock}"
-        draw_centered_text(text, font, WHITE, screen, -150 + y_offset)
-        y_offset += 30
+    
+    # Iterate through the watchlist and display each stock as a button
+    for i, (stock, days) in enumerate(watchlist, start=1):
+        stock_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 150, 250 + y_offset, 300, 50)
+        draw_button(f"{stock} ({days} days)", stock_button_rect, BLUE, mouse_pos)
+        
+        # Handle button click to select stock for viewing graph
+        if stock_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+            global selected_stock, selected_days
+            # Only change selection if the stock is different from the current selection
+            if selected_stock != stock or selected_days != days:
+                selected_stock = stock
+                selected_days = days
+                graph_shown[selected_stock] = False  # Reset the flag for the selected stock
+        
+        y_offset += 60  # Adjust the offset for the next stock button
 
+    # If a stock was selected and the graph has not been shown, show the graph for that stock
+    if selected_stock and selected_days and not graph_shown.get(selected_stock, False):
+        show_graph_for_stock(selected_stock, selected_days)
+        graph_shown[selected_stock] = True  # Mark that the graph has been shown
+    
+    # Draw the Home and End buttons for the Watchlist screen
     draw_button("Home", home_button, BLUE, mouse_pos)
     draw_button("End", end_button, BRIGHT_RED, mouse_pos)
 
@@ -121,6 +143,9 @@ def draw_your_stocks_screen(mouse_pos):
     text_surface = user_font.render(user_input, True, BLACK)
     screen.blit(text_surface, (input_box.x + 5, input_box.y + 5))
 
+    # Draw the "Clear" button next to the input box
+    draw_button("Clear", clear_button, BLUE, mouse_pos)
+    
     if response_message:
         draw_centered_text(response_message, font, WHITE, screen, 100)
 
@@ -149,6 +174,18 @@ def show_graph_in_window(data):
     plt.legend()
     plt.show()  # Opens a new window with the graph
 
+def show_graph_for_stock(stock, forecast_days):
+    """ Fetch data and show the graph for the selected stock and forecast days """
+    data = yf.download(stock, period="1y")
+    show_graph_in_window(data)
+
+# Reset the stock selection when navigating away from the watchlist screen
+def reset_selected_stock():
+    global selected_stock, selected_days
+    selected_stock = None
+    selected_days = None
+    graph_shown.clear()  # Clear all graph shown flags
+
 # Main loop
 running = True
 while running:
@@ -166,43 +203,40 @@ while running:
                     current_screen = "watchlist"
                 elif your_stocks_button.collidepoint(event.pos):
                     current_screen = "your_stocks"
-            elif current_screen == "game":
-                if home_button.collidepoint(event.pos):
-                    current_screen = "home"
-                elif end_button.collidepoint(event.pos):
-                    running = False
             elif current_screen == "watchlist":
                 if home_button.collidepoint(event.pos):
+                    reset_selected_stock()
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
+                    reset_selected_stock()
                     running = False
             elif current_screen == "your_stocks":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
                     running = False
+                elif clear_button.collidepoint(event.pos):
+                    user_input = ""
+
         elif event.type == pygame.KEYDOWN:
             if current_screen == "your_stocks":
                 if event.key == pygame.K_RETURN:
                     if current_question == "stock_ticker":
                         if validate_stock_ticker(user_input):
-                            ticker = user_input.upper()
-                            response_message = "Ticker validated! Enter forecast days."
+                            ticker = user_input
                             current_question = "forecast_days"
                             user_input = ""
                         else:
-                            response_message = "Invalid ticker!"
+                            response_message = "Invalid stock ticker."
                     elif current_question == "forecast_days":
                         if validate_forecast_days(user_input):
                             forecast_days = int(user_input)
-                            response_message = "Fetching forecast..."
-                            data = yf.download(ticker, period="1y")
-                            show_graph_in_window(data)  # Show graph in separate window
-                            watchlist.append(f"{ticker} ({forecast_days} days)")
-                            current_question = "stock_ticker"
+                            watchlist.append((ticker, forecast_days))
                             user_input = ""
+                            current_question = "stock_ticker"
+                            response_message = f"Added {ticker} to watchlist."
                         else:
-                            response_message = "Invalid forecast days!"
+                            response_message = "Please enter a valid number of days."
                 elif event.key == pygame.K_BACKSPACE:
                     user_input = user_input[:-1]
                 else:
@@ -210,14 +244,15 @@ while running:
 
     if current_screen == "home":
         draw_home_screen(mouse_pos)
-    elif current_screen == "game":
-        draw_game_screen(mouse_pos)
     elif current_screen == "watchlist":
         draw_watchlist_screen(mouse_pos)
+    elif current_screen == "game":
+        draw_game_screen(mouse_pos)
     elif current_screen == "your_stocks":
         draw_your_stocks_screen(mouse_pos)
 
     pygame.display.flip()
+    pygame.time.Clock().tick(60)
 
 pygame.quit()
 sys.exit()
