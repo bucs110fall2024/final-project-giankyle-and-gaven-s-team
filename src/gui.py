@@ -32,6 +32,38 @@ background_image_path = "../assets/stockBackground.png"  # Update this path if n
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
+#Tutorial lines
+explanation_lines = [
+    "Like the name implies, this is a stock predictor,",
+    "which uses historical data to predict what a future",
+    "stock's price will be for X amount of days.",
+    "",
+    "How does it work?",
+    "This gathers information based off of a specific ticker",
+    "(which is a 3-4 letter abbreviation) for a stock.",
+    "For instance, Apple will be AAPL, Microsoft will be MSFT.",
+    "You can search up a specific ticker online, or if you",
+    "know one, you can use that.",
+    "",
+    "The model that we chose to use was linear regression,",
+    "which is essentially like a line of best fit. It is based",
+    "on information that something is dependent on something else,",
+    "for example, a stock's price is correlated with time.",
+    "This is why the prediction is more of a linear line,",
+    "rather than something that fluctuates like a real stock.",
+    "",
+    "What are its limitations?",
+    "This predictor only takes historical data into account,",
+    "and it does not account for other things that may",
+    "influence a stock's price like news, politics,",
+    "or economic changes. However, it doesn't mean that",
+    "it is 100 percent inaccurate as shown by if you compare",
+    "historical data with the ones that were predicted.",
+    "***This should not be the sole way that you get your",
+    "information, it just shows a general trend that the",
+    "computer model sees.***"
+]
+
 # Global state
 current_screen = "home"
 user_input = ""
@@ -52,7 +84,7 @@ home_button = create_button(SCREEN_WIDTH - 170, SCREEN_HEIGHT - 70, 150, 50)
 end_button = create_button(20, SCREEN_HEIGHT - 70, 150, 50)
 clear_button = create_button(620, 250, 100, 50)
 
-game_button = create_button(0, 0, 200, 50)
+tutorial_button = create_button(0, 0, 200, 50)
 watchlist_button = create_button(0, 0, 200, 50)
 your_stocks_button = create_button(0, 0, 200, 50)
 
@@ -88,11 +120,11 @@ def draw_home_screen(mouse_pos):
     vertical_spacing = 20
     center_x = SCREEN_WIDTH // 2 - button_width // 2
 
-    game_button.topleft = (center_x, SCREEN_HEIGHT // 2 - button_height - vertical_spacing)
+    tutorial_button.topleft = (center_x, SCREEN_HEIGHT // 2 - button_height - vertical_spacing)
     watchlist_button.topleft = (center_x, SCREEN_HEIGHT // 2)
     your_stocks_button.topleft = (center_x, SCREEN_HEIGHT // 2 + button_height + vertical_spacing)
 
-    draw_button("Tutorial", game_button, BLUE, mouse_pos)
+    draw_button("Tutorial", tutorial_button, BLUE, mouse_pos)
     draw_button("Watchlist", watchlist_button, BLUE, mouse_pos)
     draw_button("Your Stocks", your_stocks_button, BLUE, mouse_pos)
 
@@ -126,10 +158,11 @@ def draw_watchlist_screen(mouse_pos):
     if show_graph:
         show_stock_graph()
 
-def draw_game_screen(mouse_pos):
+def draw_tutorial_screen(mouse_pos):
     # Correct button positions on the game screen
     home_button.topleft = (SCREEN_WIDTH - 170, SCREEN_HEIGHT - 70)
     end_button.topleft = (20, SCREEN_HEIGHT - 70)
+
 
     draw_centered_text("Game Screen", title_font, WHITE, screen, -150)
     draw_button("Home", home_button, BLUE, mouse_pos)  # Home button at the top-left
@@ -215,8 +248,8 @@ while running:
                     user_input += event.unicode
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if current_screen == "home":
-                if game_button.collidepoint(event.pos):
-                    current_screen = "game"
+                if tutorial_button.collidepoint(event.pos):
+                    current_screen = "tutorial"
                 elif watchlist_button.collidepoint(event.pos):
                     current_screen = "watchlist"
                 elif your_stocks_button.collidepoint(event.pos):
@@ -226,7 +259,7 @@ while running:
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
                     running = False
-            elif current_screen == "game":
+            elif current_screen == "tutorial":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
@@ -243,8 +276,8 @@ while running:
         draw_home_screen(mouse_pos)
     elif current_screen == "watchlist":
         draw_watchlist_screen(mouse_pos)
-    elif current_screen == "game":
-        draw_game_screen(mouse_pos)
+    elif current_screen == "tutorial":
+        draw_tutorial_screen(mouse_pos)
     elif current_screen == "your_stocks":
         draw_your_stocks_screen(mouse_pos)
 
