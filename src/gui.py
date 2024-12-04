@@ -257,20 +257,21 @@ while running:
                     current_screen = "your_stocks"
             elif current_screen == "watchlist":
                 if home_button.collidepoint(event.pos):
-                    current_screen = "home"
                     running = True
+                    current_screen = "home"
                 elif end_button.collidepoint(event.pos):
                     running = False
             elif current_screen == "tutorial":
                 if home_button.collidepoint(event.pos):
-                    current_screen = "home"
                     running = True
+                    current_screen = "home"
                 elif end_button.collidepoint(event.pos):
                     running = False
             elif current_screen == "your_stocks":
                 if home_button.collidepoint(event.pos):
-                    current_screen = "home"
                     running = True
+                    current_screen = "home"
+                
                 elif end_button.collidepoint(event.pos):
                     running = False
                 elif clear_button.collidepoint(event.pos):
