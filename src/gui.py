@@ -157,6 +157,7 @@ def draw_watchlist_screen(mouse_pos):
     # Show the stock graph if the stock was selected
     if show_graph:
         show_stock_graph()
+        show_graph = False
 
 def draw_tutorial_screen(mouse_pos):
     # Correct button positions on the game screen
@@ -257,16 +258,19 @@ while running:
             elif current_screen == "watchlist":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
+                    running = True
                 elif end_button.collidepoint(event.pos):
                     running = False
             elif current_screen == "tutorial":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
+                    running = True
                 elif end_button.collidepoint(event.pos):
                     running = False
             elif current_screen == "your_stocks":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
+                    running = True
                 elif end_button.collidepoint(event.pos):
                     running = False
                 elif clear_button.collidepoint(event.pos):
