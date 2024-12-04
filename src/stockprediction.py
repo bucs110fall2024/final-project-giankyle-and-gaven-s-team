@@ -19,8 +19,8 @@ class stockpredictor:
         today = datetime.today().strftime('%Y-%m-%d')#This is to get the current time
         self.data = yf.download(self.stock_ticker, start = "2016-01-01", end = today)  #This gets the retrieval dates, but there is no way of making the day as present as possible for the end function
         self.data.reset_index(inplace = True) #This makes sure that the dates are lined up
-        print(self.data.head()) 
-        print(self.data.columns) #I need this line and the one above to make sure that the self.data is being
+        # print(self.data.head()) 
+        # print(self.data.columns) #I need this line and the one above to make sure that the self.data is being
         #self.data.to_csv(str(stock_ticker + "_stock_self.data.csv"))
 
         self.data['Present_Close'] = self.data['Adj Close'] #I had trouble with this because I could not have 'Adj Close' as a column by itself 
@@ -43,8 +43,8 @@ class stockpredictor:
         self.sorted_stocks['Date'] = self.data.loc[Y_test.index, 'Date']
         self.sorted_stocks = self.sorted_stocks.sort_values(by="Date", ascending=True)
 
-        print("Top Predictions Sorted by Date (Chronological Order):")
-        print(self.sorted_stocks.head(-1))
+        # print("Top Predictions Sorted by Date (Chronological Order):")
+        # print(self.sorted_stocks.head(-1))
         
 
     # print(type(sorted_stocks))

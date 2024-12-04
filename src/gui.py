@@ -203,7 +203,7 @@ def show_stock_graph():
         predictor = stockpredictor(selected_stock)
         predictor.data_fetch()
         predictor.model_training()
-        forecast_df = predictor.stock_prediction(30)  # Forecast for 30 days
+        forecast_df = predictor.stock_prediction(100)
         predictor.plot_machinelearning_model(forecast_df)
 
 # Main loop
