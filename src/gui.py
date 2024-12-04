@@ -3,7 +3,6 @@ import sys
 import yfinance as yf
 import matplotlib.pyplot as plt
 from stockprediction import stockpredictor  # Import your stock prediction module
-from io import BytesIO
 
 pygame.init()
 
@@ -34,11 +33,12 @@ background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREE
 
 # Global state
 current_screen = "home"
-home_button_clicked = False
 user_input = ""
 response_message = ""
-forecast_days = None
 current_question = "stock_ticker"  # 'stock_ticker' or 'forecast_days'
+watchlist = []  # List to store watchlist items
+ticker = None
+forecast_days = None
 
 # Button definitions
 def create_button(x, y, width, height):
@@ -91,64 +91,39 @@ def draw_home_screen(mouse_pos):
     draw_button("Watchlist", watchlist_button, BLUE, mouse_pos)
     draw_button("Your Stocks", your_stocks_button, BLUE, mouse_pos)
 
-def draw_secondary_screen(title, mouse_pos):
-    draw_centered_text(title, title_font, WHITE, screen, -200)
+def draw_watchlist_screen(mouse_pos):
+    draw_centered_text("Watchlist", title_font, WHITE, screen, -200)
+    y_offset = 0
+    for i, stock in enumerate(watchlist, start=1):
+        text = f"{i}. {stock}"
+        draw_centered_text(text, font, WHITE, screen, -150 + y_offset)
+        y_offset += 30
+
+    draw_button("Home", home_button, BLUE, mouse_pos)
+    draw_button("End", end_button, BRIGHT_RED, mouse_pos)
+
+def draw_game_screen(mouse_pos):
+    draw_centered_text("Game Screen - Play the Game!", title_font, WHITE, screen, -150)
     
-    # Display "Home" and "End" buttons for the Game and Your Stocks screens
-    if title == "Game" or title == "Your Stocks":
-        draw_button("Home", home_button, BLUE, mouse_pos)
-        draw_button("End", end_button, BRIGHT_RED, mouse_pos)
-
-    # For the Watchlist screen, display a message or list content
-    if title == "Watchlist":
-        # You can display a message or actual watchlist items here
-        watchlist_message = "Your Watchlist is empty"  # Modify this to display actual watchlist items
-        draw_centered_text(watchlist_message, font, WHITE, screen, 50)
-
-        # Show Home and End buttons for Watchlist screen
-        draw_button("Home", home_button, BLUE, mouse_pos)
-        draw_button("End", end_button, BRIGHT_RED, mouse_pos)
+    # Draw the Home and End buttons for the Game screen
+    draw_button("Home", home_button, BLUE, mouse_pos)
+    draw_button("End", end_button, BRIGHT_RED, mouse_pos)
 
 def draw_your_stocks_screen(mouse_pos):
-    # Ask for stock ticker if it's the first question
     if current_question == "stock_ticker":
-        instruction_text = "Enter Stock Ticker:"
-        instruction_surface = font.render(instruction_text, True, WHITE)
-        instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, 200))
-        screen.blit(instruction_surface, instruction_rect)
-
-        # Draw input box
-        input_box = pygame.Rect(200, 250, 400, 50)
-        pygame.draw.rect(screen, WHITE, input_box)
-        pygame.draw.rect(screen, BLACK, input_box, 2)
-        text_surface = user_font.render(user_input, True, BLACK)
-        screen.blit(text_surface, (input_box.x + 5, input_box.y + 5))
-
-        if response_message:
-            response_surface = font.render(response_message, True, BLACK)
-            response_rect = response_surface.get_rect(center=(SCREEN_WIDTH // 2, 330))
-            screen.blit(response_surface, response_rect)
-
-    # Ask for forecast days if it's the second question
+        draw_centered_text("Enter Stock Ticker:", font, WHITE, screen, -150)
     elif current_question == "forecast_days":
-        instruction_text = "Enter Number of Forecast Days:"
-        instruction_surface = font.render(instruction_text, True, WHITE)
-        instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, 200))
-        screen.blit(instruction_surface, instruction_rect)
+        draw_centered_text("Enter Number of Forecast Days:", font, WHITE, screen, -150)
 
-        # Draw input box
-        input_box = pygame.Rect(200, 250, 400, 50)
-        pygame.draw.rect(screen, WHITE, input_box)
-        pygame.draw.rect(screen, BLACK, input_box, 2)
-        text_surface = user_font.render(user_input, True, BLACK)
-        screen.blit(text_surface, (input_box.x + 5, input_box.y + 5))
+    input_box = pygame.Rect(200, 250, 400, 50)
+    pygame.draw.rect(screen, WHITE, input_box)
+    pygame.draw.rect(screen, BLACK, input_box, 2)
+    text_surface = user_font.render(user_input, True, BLACK)
+    screen.blit(text_surface, (input_box.x + 5, input_box.y + 5))
 
-        if response_message:
-            response_surface = font.render(response_message, True, BLACK)
-            response_rect = response_surface.get_rect(center=(SCREEN_WIDTH // 2, 330))
-            screen.blit(response_surface, response_rect)
+    if response_message:
+        draw_centered_text(response_message, font, WHITE, screen, 100)
 
-    # Draw buttons
     draw_button("Home", home_button, BLUE, mouse_pos)
     draw_button("End", end_button, BRIGHT_RED, mouse_pos)
 
@@ -158,7 +133,6 @@ def validate_stock_ticker(ticker):
         return not data.empty
     except Exception:
         return False
-    
 
 def validate_forecast_days(days):
     try:
@@ -166,28 +140,19 @@ def validate_forecast_days(days):
     except ValueError:
         return False
 
-# Function to embed matplotlib plot in pygame without resizing the screen
-def plot_and_save():
-    # Create a sample plot
-    plt.plot([1, 2, 3, 4], [10, 20, 25, 30])
-    plt.title("Stock Forecast")
-
-    # Save the plot to a BytesIO buffer instead of displaying it
-    buf = BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    
-    # Load the plot into a pygame surface
-    plot_image = pygame.image.load(buf)
-
-    # Scale the plot image to a fixed size (without resizing the window)
-    plot_image = pygame.transform.scale(plot_image, (600, 400))  # Resize the plot image if necessary
-    return plot_image
+def show_graph_in_window(data):
+    plt.figure()
+    plt.plot(data.index, data['Close'], label="Close Price")
+    plt.title(f"Stock Forecast for {ticker} ({forecast_days} days)")
+    plt.xlabel("Date")
+    plt.ylabel("Price")
+    plt.legend()
+    plt.show()  # Opens a new window with the graph
 
 # Main loop
 running = True
 while running:
-    screen.blit(background_image, (0, 0)) 
+    screen.blit(background_image, (0, 0))
     mouse_pos = pygame.mouse.get_pos()
 
     for event in pygame.event.get():
@@ -201,7 +166,7 @@ while running:
                     current_screen = "watchlist"
                 elif your_stocks_button.collidepoint(event.pos):
                     current_screen = "your_stocks"
-            elif current_screen == "your_stocks":
+            elif current_screen == "game":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
@@ -211,7 +176,7 @@ while running:
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
                     running = False
-            elif current_screen == "game":
+            elif current_screen == "your_stocks":
                 if home_button.collidepoint(event.pos):
                     current_screen = "home"
                 elif end_button.collidepoint(event.pos):
@@ -222,42 +187,33 @@ while running:
                     if current_question == "stock_ticker":
                         if validate_stock_ticker(user_input):
                             ticker = user_input.upper()
-                            response_message = "Ticker Validated!"
+                            response_message = "Ticker validated! Enter forecast days."
                             current_question = "forecast_days"
                             user_input = ""
                         else:
-                            response_message = "Invalid Ticker!"
+                            response_message = "Invalid ticker!"
                     elif current_question == "forecast_days":
                         if validate_forecast_days(user_input):
                             forecast_days = int(user_input)
                             response_message = "Fetching forecast..."
-                            predictor = stockpredictor(ticker)
-                            predictor.data_fetch()
-                            predictor.model_training()
-                            forecast_df = predictor.stock_prediction(forecast_days)
-                            predictor.plot_machinelearning_model(forecast_df)
-
-                            # Generate the plot and show it
-                            plot_image = plot_and_save()
-                            screen.blit(plot_image, (100, 350))  # Position the plot
-
-                            response_message = ""  # Clear the response message
-                            current_question = "stock_ticker"  # Reset to stock ticker question
-                            user_input = ""  # Clear user input
+                            data = yf.download(ticker, period="1y")
+                            show_graph_in_window(data)  # Show graph in separate window
+                            watchlist.append(f"{ticker} ({forecast_days} days)")
+                            current_question = "stock_ticker"
+                            user_input = ""
                         else:
-                            response_message = "Invalid number of days!"
+                            response_message = "Invalid forecast days!"
                 elif event.key == pygame.K_BACKSPACE:
                     user_input = user_input[:-1]
                 else:
                     user_input += event.unicode
 
-    # Draw appropriate screen
     if current_screen == "home":
         draw_home_screen(mouse_pos)
     elif current_screen == "game":
-        draw_secondary_screen("Game", mouse_pos)
+        draw_game_screen(mouse_pos)
     elif current_screen == "watchlist":
-        draw_secondary_screen("Watchlist", mouse_pos)
+        draw_watchlist_screen(mouse_pos)
     elif current_screen == "your_stocks":
         draw_your_stocks_screen(mouse_pos)
 
