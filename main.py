@@ -1,9 +1,9 @@
 import pygame
-from src import Controller
+from src.controller import Controller
 
 def main():
     pygame.init()
-    game = Controller.Controller()
+    game = Controller()
     game.mainloop()
     
 # https://codefather.tech/blog/if-name-main-python/
