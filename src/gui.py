@@ -78,7 +78,7 @@ def draw_centered_text(text, font, color, surface, y_offset=0):
 
 # Screen rendering functions
 def draw_home_screen(mouse_pos):
-    welcome_text = "Welcome to the Stock Predictor Game"
+    welcome_text = "Welcome to The Stock Predictor"
     text_surface = title_font.render(welcome_text, True, WHITE)
     text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4))
     screen.blit(text_surface, text_rect)
@@ -92,7 +92,7 @@ def draw_home_screen(mouse_pos):
     watchlist_button.topleft = (center_x, SCREEN_HEIGHT // 2)
     your_stocks_button.topleft = (center_x, SCREEN_HEIGHT // 2 + button_height + vertical_spacing)
 
-    draw_button("Game", game_button, BLUE, mouse_pos)
+    draw_button("Tutorial", game_button, BLUE, mouse_pos)
     draw_button("Watchlist", watchlist_button, BLUE, mouse_pos)
     draw_button("Your Stocks", your_stocks_button, BLUE, mouse_pos)
 
