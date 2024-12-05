@@ -1,5 +1,6 @@
 import pygame
-import src.stockprediction  # Import the stock prediction module
+from src.gui_base import draw_button, draw_centered_text  # Import from gui_base
+from src.stockprediction import stockpredictor  # Import the stockpredictor class from stockprediction.py
 
 class Controller:
     def __init__(self):
@@ -37,40 +38,28 @@ class Controller:
         self.current_screen = "home"
         self.step = 1  # To track the flow: 1 = Stock Ticker, 2 = Day Predicted
         self.stock_ticker = ''  # Store stock ticker
+        self.validation_message = ""  # Store validation message for the ticker and days input
+        self.success_message = ""  # Store success messages (e.g., valid stock ticker)
 
-    def draw_home_screen(self):
+    def draw_home_screen(self, mouse_pos):
         """Draw the home screen with background and buttons."""
         # Draw the background image
         self.screen.blit(self.background_image, (0, 0))
 
         # Draw the welcome text
-        self.draw_centered_text("Welcome to the Stock Predictor", pygame.Rect(0, 0, 800, 150), (255, 255, 255), 48)
+        draw_centered_text(self.screen, "Welcome to the Stock Predictor", self.font, (255, 255, 255), pygame.Rect(0, 0, 800, 150))
 
         # Draw buttons with hover effect
-        self.draw_button(self.buttons["your_stocks"], "Your Stocks", (0, 128, 255), (0, 0, 200))
-        self.draw_button(self.buttons["exit"], "Exit", (255, 0, 0), (200, 0, 0))
+        self._draw_button_with_hover(self.buttons["your_stocks"], "Your Stocks", (0, 128, 255), (0, 100, 200), mouse_pos)
+        self._draw_button_with_hover(self.buttons["exit"], "Exit", (255, 0, 0), (200, 0, 0), mouse_pos)
 
-    def draw_button(self, button_rect, text, normal_color, hover_color):
-        """Draw a button with a hover effect."""
-        mouse_pos = pygame.mouse.get_pos()
-        
-        # Change the color of the button when the mouse is hovering over it
-        if button_rect.collidepoint(mouse_pos):
-            color = hover_color  # Hover color
+    def _draw_button_with_hover(self, rect, text, default_color, hover_color, mouse_pos):
+        """Helper function to draw buttons with hover effect."""
+        # Check if mouse is over the button
+        if rect.collidepoint(mouse_pos):
+            draw_button(rect, text, hover_color, self.screen)
         else:
-            color = normal_color  # Normal color
-
-        # Draw the button
-        pygame.draw.rect(self.screen, color, button_rect)
-
-        # Draw the button text
-        self.draw_centered_text(text, button_rect, (255, 255, 255))
-
-    def draw_centered_text(self, text, rect, color, font_size=36):
-        """Helper function to draw centered text within a rectangle."""
-        text_surface = self.font.render(text, True, color)
-        text_rect = text_surface.get_rect(center=rect.center)
-        self.screen.blit(text_surface, text_rect)
+            draw_button(rect, text, default_color, self.screen)
 
     def handle_home_events(self, event):
         """Handle events for the home screen."""
@@ -85,28 +74,38 @@ class Controller:
                 pygame.quit()
                 exit()
 
-    def draw_your_stocks_screen(self):
+    def draw_your_stocks_screen(self, mouse_pos):
         """Draw the Your Stocks screen."""
         # Draw the background image
         self.screen.blit(self.background_image, (0, 0))  # Reuse the background image
         
         # Draw the Exit button and Home button
-        self.draw_button(self.buttons["exit_secondary"], "Exit", (255, 0, 0), (200, 0, 0))
-        self.draw_button(self.buttons["home"], "Home", (0, 128, 0), (0, 200, 0))
+        self._draw_button_with_hover(self.buttons["exit_secondary"], "Exit", (255, 0, 0), (200, 0, 0), mouse_pos)
+        self._draw_button_with_hover(self.buttons["home"], "Home", (0, 128, 0), (0, 100, 0), mouse_pos)
 
         # Draw dynamic labels and prompts based on step
         if self.step == 1:
-            self.draw_centered_text("Enter Stock Ticker:", pygame.Rect(0, 0, 800, 200), (255, 255, 255), 36)
+            draw_centered_text(self.screen, "Enter Stock Ticker:", self.font, (255, 255, 255), pygame.Rect(0, 0, 800, 200))
         elif self.step == 2:
-            self.draw_centered_text("Enter Day Predicted:", pygame.Rect(0, 0, 800, 200), (255, 255, 255), 36)
+            draw_centered_text(self.screen, "Enter Day Predicted:", self.font, (255, 255, 255), pygame.Rect(0, 0, 800, 200))
 
         # Draw the input box (white background with black outline)
         pygame.draw.rect(self.screen, (0, 0, 0), self.input_box, 2)  # Black outline
         pygame.draw.rect(self.screen, (255, 255, 255), self.input_box)  # White background
-        self.draw_centered_text(self.text, self.input_box, (0, 0, 0))  # Text inside box (black)
+        draw_centered_text(self.screen, self.text, self.font, (0, 0, 0), self.input_box)  # Text inside box (black)
 
         # Draw the Clear button (grey color with highlight effect)
-        self.draw_button(self.buttons["clear"], "Clear", (169, 169, 169), (200, 200, 200))  # Highlighted when hovered
+        self._draw_button_with_hover(self.buttons["clear"], "Clear", (169, 169, 169), (128, 128, 128), mouse_pos)
+
+        # Draw validation message for stock ticker or days
+        if self.validation_message:
+            validation_text = self.font.render(self.validation_message, True, (255, 0, 0))  # Red text for error messages
+            self.screen.blit(validation_text, (self.input_box.x, self.input_box.y + 60))  # Position below the input box
+
+        # Draw success message for valid ticker
+        if self.success_message:
+            success_text = self.font.render(self.success_message, True, (0, 255, 0))  # Green text for success
+            self.screen.blit(success_text, (self.input_box.x, self.input_box.y + 60))  # Position below the input box
 
     def handle_your_stocks_events(self, event):
         """Handle events for the Your Stocks screen."""
@@ -136,43 +135,73 @@ class Controller:
             if self.active:
                 if event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]  # Delete last character
+                elif event.key == pygame.K_RETURN:
+                    self.handle_return_key()  # Handle Enter key press
                 else:
                     self.text += event.unicode  # Add typed character to the text
 
-        # Once the user has entered the stock ticker, move to the next step
-        if self.step == 1 and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+    def handle_return_key(self):
+        """Handle the return key for step transitions and validation."""
+        if self.step == 1:  # Stock Ticker Step
             if self.text:  # If there is text entered for stock ticker
                 self.stock_ticker = self.text
-                self.step = 2  # Move to Day Predicted input
-                self.text = ""  # Clear text for the next input
+                if self.is_valid_stock_ticker(self.stock_ticker):
+                    self.success_message = "Valid ticker!"  # Show valid ticker message
+                    self.step = 2  # Move to Day Predicted input
+                    self.text = ""  # Clear text for the next input
+                    self.validation_message = ""  # Clear validation message
+                else:
+                    self.validation_message = "Invalid stock ticker. Please enter a valid ticker."
+            else:
+                self.validation_message = "Please enter a stock ticker."
+        elif self.step == 2:  # Day Predicted Step
+            if self.text:
+                if self.is_valid_day_input(self.text):
+                    prediction = self.predict_stock(self.stock_ticker, self.text)
+                    self.validation_message = f"Prediction: {prediction}"
+                else:
+                    self.validation_message = "Invalid number of days. Please enter a valid number."
+            else:
+                self.validation_message = "Please enter the number of days."
 
-        # Once the user has entered the day predicted, show the entered values
-        if self.step == 2 and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            if self.text:  # If there is text entered for day predicted
-                predicted_result = stockprediction.predict_stock(self.stock_ticker, self.text)
-                print(predicted_result)  # Display the prediction result in the console
-                self.text = predicted_result  # Show the result in the input box
+    def is_valid_stock_ticker(self, ticker):
+        """Check if the stock ticker is valid."""
+        return ticker.isalpha() and len(ticker) > 0  # Stock ticker should only contain letters and have at least one character
+
+    def is_valid_day_input(self, day_input):
+        """Check if the number of days input is valid."""
+        try:
+            days = int(day_input)
+            return days > 0  # Check if the number of days is positive
+        except ValueError:
+            return False  # Return False if input is not an integer
+
+    def predict_stock(self, ticker, days):
+        """Make a stock prediction using the stock predictor class."""
+        predictor = stockpredictor(ticker, int(days))  # Create an instance of stockpredictor
+        prediction = predictor.predict_stock_trend()
+        return prediction
 
     def mainloop(self):
-        """Main loop for the controller."""
-        running = True
-        while running:
-            mouse_pos = pygame.mouse.get_pos()
+        """Main loop to run the program."""
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.quit()
+                    exit()
 
-                # Handle events for the current screen
+                # Handle events based on the current screen
                 if self.current_screen == "home":
                     self.handle_home_events(event)
                 elif self.current_screen == "your_stocks":
                     self.handle_your_stocks_events(event)
 
-            # Draw the current screen
+            # Draw the appropriate screen
+            self.screen.fill((0, 0, 0))  # Fill screen with black
             if self.current_screen == "home":
-                self.draw_home_screen()
+                self.draw_home_screen(pygame.mouse.get_pos())
             elif self.current_screen == "your_stocks":
-                self.draw_your_stocks_screen()
+                self.draw_your_stocks_screen(pygame.mouse.get_pos())
 
             # Update the display
             pygame.display.flip()
@@ -180,7 +209,6 @@ class Controller:
 
         pygame.quit()
 
-# Create an instance of the Controller class and start the game loop
 if __name__ == "__main__":
     controller = Controller()
     controller.mainloop()
