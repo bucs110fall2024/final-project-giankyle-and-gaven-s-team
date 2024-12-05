@@ -1,4 +1,5 @@
 import pygame
+import matplotlib.pyplot as plt  # Import matplotlib for graph plotting
 from src.gui_base import draw_button, draw_centered_text  # Import from gui_base
 from src.stockprediction import stockpredictor  # Import the stockpredictor class from stockprediction.py
 
@@ -148,21 +149,35 @@ class Controller:
                 if self.is_valid_stock_ticker(self.stock_ticker):
                     self.success_message = "Valid ticker!"  # Show valid ticker message
                     self.step = 2  # Move to Day Predicted input
-                    self.text = ""  # Clear text for the next input
-                    self.validation_message = ""  # Clear validation message
+                    self.validation_message = ""  # Clear any previous validation message
+                    self.text = ""  # Clear the input text after validation
                 else:
+                    self.success_message = ""
                     self.validation_message = "Invalid stock ticker. Please enter a valid ticker."
             else:
+                self.success_message = ""
                 self.validation_message = "Please enter a stock ticker."
         elif self.step == 2:  # Day Predicted Step
-            if self.text:
+            if self.text:  # If there is text entered for days
                 if self.is_valid_day_input(self.text):
                     prediction = self.predict_stock(self.stock_ticker, self.text)
                     self.validation_message = f"Prediction: {prediction}"
+                    self.plot_graph(prediction)  # Call method to plot the graph
                 else:
                     self.validation_message = "Invalid number of days. Please enter a valid number."
             else:
                 self.validation_message = "Please enter the number of days."
+
+    def plot_graph(self, prediction):
+        """Method to plot the stock prediction graph."""
+        # Assuming 'prediction' is a list of predicted stock prices over time
+        plt.figure(figsize=(10, 5))
+        plt.plot(prediction, label="Predicted Stock Price")
+        plt.title(f"Stock Price Prediction for {self.stock_ticker}")
+        plt.xlabel("Days")
+        plt.ylabel("Stock Price")
+        plt.legend()
+        plt.show()  # Show the graph
 
     def is_valid_stock_ticker(self, ticker):
         """Check if the stock ticker is valid."""
@@ -177,10 +192,13 @@ class Controller:
             return False  # Return False if input is not an integer
 
     def predict_stock(self, ticker, days):
-        """Make a stock prediction using the stock predictor class."""
-        predictor = stockpredictor(ticker, int(days))  # Create an instance of stockpredictor
-        prediction = predictor.predict_stock_trend()
-        return prediction
+        try:
+            predictor = stockpredictor(ticker, int(days))  # Pass both ticker and days
+            prediction = predictor.predict()
+            return prediction
+        except Exception as e:
+            print(f"Error predicting stock: {e}")
+            return None
 
     def mainloop(self):
         """Main loop to run the program."""
