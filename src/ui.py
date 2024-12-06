@@ -32,9 +32,9 @@ class UI:
         self.screen.blit(title, (center_x - title.get_width() // 2, 50))
 
         # Draw the home screen buttons
-        self.draw_button(self.watchlist_button, "Watchlist/Disclosure", mouse_pos)
+        self.draw_button(self.watchlist_button, "Watchlist", mouse_pos)
         self.draw_button(self.your_stocks_button, "Your Stocks", mouse_pos)
-        self.draw_button(self.tutorial_button, "Tutorial", mouse_pos)
+        self.draw_button(self.tutorial_button, "Tutorial/Information", mouse_pos)
         
 
     def draw_tutorial_screen(self,mouse_pos):
