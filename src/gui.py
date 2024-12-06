@@ -32,37 +32,6 @@ background_image_path = "../assets/stockBackground.png"  # Update this path if n
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-#Tutorial lines
-explanation_lines = [
-    "Like the name implies, this is a stock predictor,",
-    "which uses historical data to predict what a future",
-    "stock's price will be for X amount of days.",
-    "",
-    "How does it work?",
-    "This gathers information based off of a specific ticker",
-    "(which is a 3-4 letter abbreviation) for a stock.",
-    "For instance, Apple will be AAPL, Microsoft will be MSFT.",
-    "You can search up a specific ticker online, or if you",
-    "know one, you can use that.",
-    "",
-    "The model that we chose to use was linear regression,",
-    "which is essentially like a line of best fit. It is based",
-    "on information that something is dependent on something else,",
-    "for example, a stock's price is correlated with time.",
-    "This is why the prediction is more of a linear line,",
-    "rather than something that fluctuates like a real stock.",
-    "",
-    "What are its limitations?",
-    "This predictor only takes historical data into account,",
-    "and it does not account for other things that may",
-    "influence a stock's price like news, politics,",
-    "or economic changes. However, it doesn't mean that",
-    "it is 100 percent inaccurate as shown by if you compare",
-    "historical data with the ones that were predicted.",
-    "***This should not be the sole way that you get your",
-    "information, it just shows a general trend that the",
-    "computer model sees.***"
-]
 
 # Global state
 current_screen = "home"
