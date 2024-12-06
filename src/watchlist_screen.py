@@ -1,22 +1,30 @@
-from src.gui_base import screen, title_font, draw_button, BLUE
 import pygame
+from src.gui_base import draw_button, draw_centered_text
 
-watchlist = [("AAPL", 10), ("GOOGL", 5)]  # Example watchlist items
+class WatchlistScreen:
+    def __init__(self, screen, controller):
+        self.screen = screen
+        self.controller = controller  # Store the controller reference
+        self.font = pygame.font.Font(None, 36)
+        self.color = (0, 0, 0)
 
-home_button = pygame.Rect(650, 500, 100, 50)
+    def update(self):
+        self.screen.fill((255, 255, 255))  # White background
+        self.draw_text("Watchlist", self.font, self.color, self.screen, 100)
+        self.draw_button(pygame.Rect(300, 500, 200, 50), "Go Back", (0, 255, 0), self.screen)
 
-def draw_watchlist_screen(mouse_pos, event):
-    global watchlist
-    y_offset = 0
-    for stock, days in watchlist:
-        stock_button = pygame.Rect(300, 150 + y_offset, 200, 50)
-        draw_button(f"{stock} ({days} days)", stock_button, BLUE, mouse_pos, screen)
-        y_offset += 60
+    def handle_mouse_click(self, mouse_pos):
+        if self.is_button_clicked(mouse_pos, (300, 500, 200, 50)):  # Go Back button
+            self.controller.change_screen("home")
 
-    draw_button("Home", home_button, BLUE, mouse_pos, screen)
+    def handle_keydown(self, event):
+        pass
 
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        if home_button.collidepoint(event.pos):
-            return "home"
+    def draw_text(self, text, font, color, surface, y_offset=0):
+        draw_centered_text(surface, text, font, color, pygame.Rect(100, 100 + y_offset, 600, 100))
 
-    return "watchlist"
+    def draw_button(self, rect, text, color, surface):
+        draw_button(rect, text, color, surface)
+
+    def is_button_clicked(self, mouse_pos, button_rect):
+        return pygame.Rect(button_rect).collidepoint(mouse_pos)

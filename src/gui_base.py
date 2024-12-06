@@ -1,6 +1,10 @@
 import pygame
 
-pygame.init()
+def load_background_image(image_path):
+    """Load and resize the background image to fit the screen size."""
+    image = pygame.image.load(image_path)  # Load the image
+    screen_width, screen_height = pygame.display.get_surface().get_size()  # Get the screen dimensions
+    return pygame.transform.scale(image, (screen_width, screen_height))  # Resize the image to match the screen size
 
 def draw_button(rect, text, color, surface):
     """Draw a button with the specified properties."""

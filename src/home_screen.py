@@ -1,29 +1,52 @@
-from src.gui_base import screen, title_font, draw_button, BLUE
 import pygame
+from src.gui_base import draw_centered_text, draw_button
+class HomeScreen:
+    def __init__(self, screen, controller):
+        self.screen = screen
+        self.controller = controller
+        self.font = pygame.font.Font(None, 48)
+        self.button_font = pygame.font.Font(None, 36)
 
-# Button definitions
-tutorial_button = pygame.Rect(300, 200, 200, 50)
-watchlist_button = pygame.Rect(300, 300, 200, 50)
-your_stocks_button = pygame.Rect(300, 400, 200, 50)
+        # Define button positions
+        self.start_button = pygame.Rect(300, 300, 200, 50)
 
-def draw_home_screen(mouse_pos, event):
-    # Example buttons
-    watchlist_button = pygame.Rect(100, 100, 200, 50)
-    stocks_button = pygame.Rect(100, 200, 200, 50)
+    def update(self):
+        """Update screen elements."""
+        pass
 
-    # Draw buttons
-    pygame.draw.rect(screen, (0, 128, 255), watchlist_button)  # Blue button
-    pygame.draw.rect(screen, (0, 255, 128), stocks_button)     # Green button
+    def draw(self, background_image):
+        """Draw the Home screen."""
+        self.screen.blit(background_image, (0, 0))
 
+        # Draw the title at the top
+        title_text = "Welcome to Stock Predictor"
+        draw_centered_text(self.screen, title_text, self.font, (255, 255, 255), pygame.Rect(0, 50, self.screen.get_width(), 100))
 
-    # Handle button clicks
-    if watchlist_button.collidepoint(mouse_pos):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            return "watchlist"  # Navigate to watchlist screen
+        # Get mouse position
+        mouse_pos = pygame.mouse.get_pos()
 
-    if stocks_button.collidepoint(mouse_pos):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            return "your_stocks"  # Navigate to your stocks screen
+        # Define button colors
+        normal_color = (0, 0, 255)  # Default color (blue)
+        hover_color = (0, 0, 139)   # Darker blue when hovered
 
-    return "home"  # Stay on home screen if no button clicked
-    
+        # Check if the mouse is over the button and change the color
+        button_color = normal_color
+        if self.start_button.collidepoint(mouse_pos):
+            button_color = hover_color  # Darken button when hovered
+
+        # Draw the "Your Stocks" button
+        draw_button(self.start_button, "Your Stocks", button_color, self.screen)
+
+    def handle_click(self, event):
+        """Handle mouse click events for the Home screen."""
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left-click
+            mouse_pos = pygame.mouse.get_pos()
+
+            # Check if the "Your Stocks" button was clicked
+            if self.start_button.collidepoint(mouse_pos):
+                self.controller.switch_to_your_stocks_screen()  # Switch to Your Stocks screen
+
+    def handle_key_event(self, event):
+        """Handle keyboard events (optional for HomeScreen)."""
+        # HomeScreen doesn't really need this, but added to avoid errors.
+        pass

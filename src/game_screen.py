@@ -1,43 +1,30 @@
 import pygame
-from src.gui_base import draw_centered_text, draw_button
+from src.gui_base import draw_button, draw_centered_text
 
-# Screen dimensions and colors
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-BLUE = (52, 152, 219)
-WHITE = (255, 255, 255)
-BRIGHT_RED = (255, 0, 0)
-SHADOW_COLOR = (200, 200, 200)
+class GameScreen:
+    def __init__(self, screen, controller):
+        self.screen = screen
+        self.controller = controller  # Store the controller reference
+        self.font = pygame.font.Font(None, 36)
+        self.color = (0, 0, 0)
 
-# Fonts
-title_font = pygame.font.Font(None, 48)
+    def update(self):
+        self.screen.fill((255, 255, 255))  # White background
+        self.draw_text("Game Screen", self.font, self.color, self.screen, 100)
+        self.draw_button(pygame.Rect(300, 500, 200, 50), "Go Back", (0, 255, 0), self.screen)
 
-# Buttons
-def create_button(x, y, width, height):
-    return pygame.Rect(x, y, width, height)
+    def handle_mouse_click(self, mouse_pos):
+        if self.is_button_clicked(mouse_pos, (300, 500, 200, 50)):  # Go Back button
+            self.controller.change_screen("home")
 
-home_button = create_button(SCREEN_WIDTH - 170, SCREEN_HEIGHT - 70, 150, 50)
-end_button = create_button(20, SCREEN_HEIGHT - 70, 150, 50)
+    def handle_keydown(self, event):
+        pass
 
-def draw_game_screen(screen, mouse_pos):
-    """
-    Render the Game Screen components.
-    """
-    # Correct button positions on the game screen
-    home_button.topleft = (SCREEN_WIDTH - 170, SCREEN_HEIGHT - 70)
-    end_button.topleft = (20, SCREEN_HEIGHT - 70)
+    def draw_text(self, text, font, color, surface, y_offset=0):
+        draw_centered_text(surface, text, font, color, pygame.Rect(100, 100 + y_offset, 600, 100))
 
-    # Render Game Screen title
-    draw_centered_text("Game Screen", title_font, WHITE, screen, -150)
+    def draw_button(self, rect, text, color, surface):
+        draw_button(rect, text, color, surface)
 
-    # Render buttons
-    draw_button("Home", home_button, BLUE, mouse_pos)
-    draw_button("End", end_button, BRIGHT_RED, mouse_pos)
-    
-def draw_tutorial_screen(screen):
-    screen.fill((0, 0, 0))  # Fill the screen with black
-    font = pygame.font.Font(None, 36)
-    text_surface = font.render("Tutorial Screen", True, (255, 255, 255))
-    text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-    screen.blit(text_surface, text_rect)
-    pygame.display.flip()
+    def is_button_clicked(self, mouse_pos, button_rect):
+        return pygame.Rect(button_rect).collidepoint(mouse_pos)
