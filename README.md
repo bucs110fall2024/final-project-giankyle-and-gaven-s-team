@@ -28,11 +28,11 @@ This game will be a stock predictor where it incorporates where it provides you 
 
 ### Features
 
-1. User interface with keyboard interactions with the player
-2. Graphics for each phase of the scene 
-3. Start menu
-4. Moveable character that interactive with the whole game
-5. Game over and thank you screen 
+1. Home Gui
+2. Predicts stock over period of time 
+3. Saved stocks for future references
+4. Buttons for each stock that was inputted
+5. Top stocks of each da 
 
 ### Classes
 
@@ -42,6 +42,10 @@ This game will be a stock predictor where it incorporates where it provides you 
 
 | Step                 |Procedure             |Expected Results                   |
 |----------------------|:--------------------:|----------------------------------:|
-|  1                   | Run Counter Program  |GUI window appears with count = 0  |
-|  2                   | click count button   | display changes to count = 1      |
-etc...
+|  1                   |Go to Your Stocks and press the button| Text box will appear on display |
+|  2                   |Type your desired stock, in this case do NVDA, then press enter| Display will show "Valid Stock!" and ask forecast days|
+|  3                   |Input 100 days and then press enter| Graph of NVDA will appear.|
+|  4                   |Close the Graph window and press home| Graph will disappear, user will go to homepage |
+|  5                   |Press the Watchlist button| NVDA(100) button will appear       |
+|  6                   |Click the NVDA(100) button  | The graph will reappear of NVDA       |
+|  7                   |Close the graph window and press home    |User will be brought back to the home page |
