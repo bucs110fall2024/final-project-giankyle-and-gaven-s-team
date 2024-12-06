@@ -27,6 +27,8 @@ class UI:
         # Optional: Add clear button for the 'Your Stocks' screen, aligned after input box
         self.clear_button = pygame.Rect(self.input_box.right + 10, self.screen_height // 2 + 50, 100, 50)  # Align with input box
 
+        self.watchlist = []  # List to store watchlist items (stocks and days)
+
     def draw_home_screen(self, mouse_pos, center_x):
         """Draw the home screen with buttons."""
         title = self.font.render("Stock Predictor", True, (255, 255, 255))
@@ -50,7 +52,7 @@ class UI:
         self.draw_input_box()
 
         # Display user input (stock ticker) and response (number of days)
-        input_text = self.font.render(f"Input: {user_input}", True, (255, 255, 255))
+        input_text = self.font.render(f"{user_input}", True, (255, 255, 255))
         self.screen.blit(input_text, (self.screen_width // 2 - input_text.get_width() // 2, self.screen_height // 2 + 50))
 
         if self.days is not None:  # If number of days has been set, display it
@@ -69,12 +71,14 @@ class UI:
         title = self.font.render("Watchlist", True, (255, 255, 255))
         self.screen.blit(title, (self.screen_width // 2 - title.get_width() // 2, 50))
 
-        # Display each stock in the watchlist
+        # Display each stock in the watchlist as a button
         y_offset = 150
-        for ticker, days in watchlist:
-            watchlist_item = self.font.render(f"{ticker} - {days} days", True, (255, 255, 255))
-            self.screen.blit(watchlist_item, (self.screen_width // 2 - watchlist_item.get_width() // 2, y_offset))
-            y_offset += 40  # Move down for the next item
+        for idx, (ticker, days) in enumerate(watchlist):
+            button_rect = pygame.Rect(self.screen_width // 2 - 100, y_offset, 200, 50)
+            self.draw_button(button_rect, f"{ticker}", mouse_pos, watchlist_button=True)
+            if button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+                self.open_stock_graph(ticker)  # Open graph for the selected stock
+            y_offset += 60  # Space out the buttons
 
         # Draw home and end buttons at bottom corners
         self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
@@ -89,7 +93,7 @@ class UI:
         self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
 
-    def draw_button(self, button, text, mouse_pos, home_button=False, end_button=False, gray_button=False):
+    def draw_button(self, button, text, mouse_pos, home_button=False, end_button=False, gray_button=False, watchlist_button=False):
         """Draw a button with highlight effect when the mouse is over it."""
         # Adjust button size based on text
         label = self.font.render(text, True, (255, 255, 255))
@@ -106,6 +110,8 @@ class UI:
                 button_color = (0, 255, 0)  # Green color for the Home button
             elif gray_button:
                 button_color = (169, 169, 169)  # Gray color for the Clear button
+            elif watchlist_button:
+                button_color = (0, 0, 255)  # Blue color for Watchlist buttons
             else:
                 button_color = (0, 0, 255)  # Default color (blue)
 
@@ -114,7 +120,7 @@ class UI:
 
     def draw_input_box(self):
         """Draw the input box with white background and black outline, and handle user typing."""
-        # Draw the filled white rectangle for the input box
+        # Draw the filled white rectangle for the input box first
         pygame.draw.rect(self.screen, (255, 255, 255), self.input_box)  # White fill
         pygame.draw.rect(self.screen, (0, 0, 0), self.input_box, 2)  # Black outline
 
@@ -123,6 +129,7 @@ class UI:
         text_x = self.input_box.x + 10  # Horizontal padding (10 pixels from the left edge)
         text_y = self.input_box.y + (self.input_box.height - input_surface.get_height()) // 2  # Vertically center the text
 
+        # Position text inside the input box and render it above the input box
         self.screen.blit(input_surface, (text_x, text_y))  # Position text inside the input box
 
     def handle_input_events(self, event):
@@ -145,4 +152,44 @@ class UI:
                 if self.input_box.collidepoint(event.pos):
                     self.active = True  # Focus on input box
                 else:
-                    self.active = False  # Click outside, de-focus the input box
+                    self.active = False  # Lose focus if clicked elsewhere
+
+    def open_stock_graph(self, ticker):
+        """Open the generated graph for a stock."""
+        print(f"Opening stock graph for {ticker}")  # Add your stock graph logic here
+
+
+# Main execution to use the above UI class
+def main():
+    pygame.init()
+    screen_width, screen_height = 800, 600
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Stock Predictor")
+
+    ui = UI(screen, screen_width, screen_height)
+
+    # Event loop
+    running = True
+    mouse_pos = (0, 0)
+
+    while running:
+        screen.fill((0, 0, 0))  # Clear screen with black
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            ui.handle_input_events(event)
+
+        # Get the mouse position
+        mouse_pos = pygame.mouse.get_pos()
+
+        # For example, if we are on the watchlist screen, we pass the watchlist to draw it
+        ui.draw_watchlist_screen(mouse_pos, ui.watchlist)
+
+        pygame.display.update()
+
+    pygame.quit()
+
+
+if __name__ == "__main__":
+    main()
