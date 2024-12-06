@@ -37,9 +37,11 @@ class Controller:
         if event.type == pygame.KEYDOWN:
             if self.current_screen == "your_stocks":
                 if event.key == pygame.K_BACKSPACE:
-                    self.user_input = self.user_input[:-1]
+                    self.user_input = self.user_input[:-1]  # Remove the last character
                 elif event.key == pygame.K_RETURN:
-                    self.process_user_input()
+                    self.process_user_input()  # Process user input on Enter key press
+                else:
+                    self.user_input += event.unicode  # Add the typed character to user_input
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self.current_screen == "home":
@@ -58,7 +60,7 @@ class Controller:
             if self.validate_stock_ticker(self.ticker):
                 self.current_question = "forecast_days"
                 self.response_message = "Ticker valid. Enter forecast days."
-                self.user_input = ""
+                self.user_input = ""  # Clear user input
             else:
                 self.response_message = "Invalid stock ticker."
         elif self.current_question == "forecast_days" and self.user_input:
@@ -89,7 +91,7 @@ class Controller:
         self.watchlist.append((self.ticker, self.forecast_days))
         self.response_message = f"Added {self.ticker} to watchlist."
         self.current_question = "stock_ticker"
-        self.user_input = ""
+        self.user_input = ""  # Clear user input after prediction
 
     def handle_home_screen_buttons(self, pos):
         """Handle button clicks on the home screen."""
@@ -117,14 +119,16 @@ class Controller:
             sys.exit()
 
     def handle_your_stocks_buttons(self, pos):
-        """Handle button clicks on the your stocks screen."""
+        """Handle button clicks on the 'Your Stocks' screen."""
         if self.ui.home_button.collidepoint(pos):
             self.current_screen = "home"
         elif self.ui.end_button.collidepoint(pos):
             pygame.quit()
             sys.exit()
         elif self.ui.clear_button.collidepoint(pos):
+            # Clear the user input
             self.user_input = ""
+            self.response_message = ""
 
     def update(self):
         """Update the screen based on the current screen."""
@@ -134,17 +138,15 @@ class Controller:
         self.screen.blit(self.background_image, (0, 0))  # Position (0, 0) is top-left corner
 
         if self.current_screen == "home":
-            # Center the title and buttons
             center_x = self.screen_width // 2  # Center horizontally
-            self.ui.draw_home_screen(mouse_pos, center_x)  # Pass center_x to the draw_home_screen method
+            self.ui.draw_home_screen(mouse_pos, center_x)
         elif self.current_screen == "watchlist":
             self.ui.draw_watchlist_screen(mouse_pos, self.watchlist)
         elif self.current_screen == "tutorial":
             self.ui.draw_tutorial_screen(mouse_pos)
         elif self.current_screen == "your_stocks":
-            # Align "Your Stocks" screen in the center of the window
-            center_x = (self.screen_width - 400) // 2  # Assuming the screen content is 400px wide
-            center_y = (self.screen_height - 300) // 2  # Assuming the screen content is 300px tall
+            center_x = (self.screen_width - 400) // 2
+            center_y = (self.screen_height - 300) // 2
             self.ui.draw_your_stocks_screen(mouse_pos, self.user_input, self.response_message, center_x, center_y)
 
         pygame.display.flip()
