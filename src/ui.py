@@ -1,5 +1,5 @@
 import pygame
-
+import time
 class UI:
     def __init__(self, screen, screen_width, screen_height):
         self.screen = screen
@@ -9,23 +9,32 @@ class UI:
         self.button_padding = 20
         self.font = pygame.font.Font(None, 36)
 
-        # Define button rectangles for Home and End buttons
-        self.home_button = pygame.Rect(self.screen_width - 170, self.screen_height - 95, 150, 75)  # Right bottom corner
-        self.end_button = pygame.Rect(20, self.screen_height - 95, 150, 75)  # Left bottom corner
+        self.home_button = pygame.Rect(self.screen_width - 170, self.screen_height - 95, 150, 75)  
+        self.end_button = pygame.Rect(20, self.screen_height - 95, 150, 75)  
 
-        # Define buttons for the home screen
         self.watchlist_button = pygame.Rect(self.screen_width // 2 - 50, 200, 100, 50)
         self.your_stocks_button = pygame.Rect(self.screen_width // 2 - 50, 300, 100, 50)
         self.tutorial_button = pygame.Rect(self.screen_width // 2 - 50, 400, 100, 50)
 
-        # Input box and text storage
+
         self.input_box = pygame.Rect(self.screen_width // 2 - 100, self.screen_height // 2 + 50, 200, 50)
-        self.input_text = ""  # Stores the text typed by the user
-        self.active = False  # To check if the input box is active/focused
+        self.input_text = ""  
+        self.active = False  
 
         # Optional: Add clear button for the 'Your Stocks' screen, aligned after input box
         self.clear_button = pygame.Rect(self.input_box.right + 10, self.screen_height // 2 + 50, 100, 50)  # Align with input box
 
+    def draw_tutorial_screen(self,mouse_pos):
+    # Correct button positions on the game screen
+        self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
+        self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
+        self.instruction1 = pygame.image.load('assets/instruction.png') 
+        self.instruction2 = pygame.image.load('assets/instruction2.png')
+        self.instruction1 = pygame.transform.scale(self.instruction1, (self.screen_width/1.25, self.screen_height/1.25))
+        self.instruction2 = pygame.transform.scale(self.instruction1, (self.screen_width/1.25, self.screen_height/1.25))
+        self.screen.blit(self.instruction1, (70, 20)) 
+        pygame.display.flip()
+        
     def draw_home_screen(self, mouse_pos, center_x):
         """Draw the home screen with buttons."""
         title = self.font.render("Stock Predictor", True, (255, 255, 255))
@@ -35,6 +44,7 @@ class UI:
         self.draw_button(self.watchlist_button, "Watchlist", mouse_pos)
         self.draw_button(self.your_stocks_button, "Your Stocks", mouse_pos)
         self.draw_button(self.tutorial_button, "Tutorial", mouse_pos)
+        
 
     def draw_your_stocks_screen(self, mouse_pos, user_input, response_message, center_x, center_y):
         """Draw the 'Your Stocks' screen with user input and response."""

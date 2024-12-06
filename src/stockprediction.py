@@ -7,8 +7,24 @@ from sklearn.linear_model import LinearRegression
 from datetime import datetime
 from datetime import timedelta
 
-class stockpredictor: 
+class stockpredictor:
+    '''
+    This is a class that predicts stock prices using historical data and linear regression
+  
+    Args:
+    None
+    '''
+
     def __init__(self, stock_ticker):
+        
+        """
+        Initializes the stock predictor with the stock ticker symbol.
+
+
+        Args:
+        stock_ticker (str): The stock symbol for the company (e.g., "AAPL" for Apple).
+        """
+
         self.stock_ticker = stock_ticker
         self.data = None
         self.model = None
@@ -16,6 +32,18 @@ class stockpredictor:
 #It takes some time for everything to load
 
     def data_fetch(self):
+        '''
+        This downloads the Yahoo Finance data from 01-01-2016 for the given stock ticker.
+        ['Present_Close'] (Adjusted Close)
+        ['Previous_Close'] (Shifted one day backwards)
+        ['Next_Close'] (Shifted one day forward)
+        ['Price_Change'] (Difference between Present_close and Previous_close)
+      
+        Args:
+        None
+      
+        '''
+
         today = datetime.today().strftime('%Y-%m-%d')#This is to get the current time
         self.data = yf.download(self.stock_ticker, start = "2016-01-01", end = today)  #This gets the retrieval dates, but there is no way of making the day as present as possible for the end function
         self.data.reset_index(inplace = True) #This makes sure that the dates are lined up
@@ -30,7 +58,18 @@ class stockpredictor:
         self.data.dropna(inplace=True)#This is to drop any values that don't exist
 
 
-    def model_training(self):   
+    def model_training(self):
+        """
+        Trains a linear regression model to predict the 'Next_Close' based on 'Previous_Close' and 'Price_Change'.
+        
+        Splits the data into training and testing sets and fits the model on the training data.
+        The trained model is used to predict the stock price, and the actual vs predicted values
+        are stored in the 'sorted_stocks' attribute.
+      
+        Args:
+        None
+        """
+ 
         X = self.data[['Previous_Close', 'Price_Change']]
         Y = self.data['Next_Close']
 
@@ -50,6 +89,17 @@ class stockpredictor:
     # print(type(sorted_stocks))
 
     def stock_prediction(self, forecast_days):
+        '''
+        Predicts the stocks using linear regression from historical information downloaded
+      
+        Arg:
+        forecast_days (int): The number of days to predict ahead.
+      
+        Returns:
+        pd.DataFrame: This is a dataframe that contains forecasted stock prices
+          
+        '''
+
         last_close = self.data['Adj Close'].iloc[-1]
         forecast_dates = pd.date_range(start=self.data['Date'].iloc[-1] + timedelta(days=1), periods=forecast_days)
         forecast_df = pd.DataFrame({'Date': forecast_dates})
@@ -73,6 +123,14 @@ class stockpredictor:
         return forecast_df
 
     def plot_machinelearning_model(self,forecast_df= None,):
+        """
+        Plots the actual vs predicted stock prices along with the forecasted stock prices.
+
+
+        Args:
+           forecast_df (pd.DataFrame, optional): DataFrame containing the forecasted prices. Defaults to None.
+        """
+
         plt.figure(figsize=(12, 6))
         plt.plot(self.sorted_stocks['Date'], self.sorted_stocks['Actual'], label='Actual', marker='o', color='green')
         plt.plot(self.sorted_stocks['Date'], self.sorted_stocks['Predicted'], label='Predicted', marker='o', color='red')
@@ -85,19 +143,19 @@ class stockpredictor:
         plt.xticks(rotation=45)
         plt.show()
 
-if __name__ == "__main__":
-    try:
-        stock_ticker = input("Enter the stock ticker that you would like to search up: ").upper()
-        predictor = stockpredictor(stock_ticker)
-        predictor.data_fetch()
-        predictor.model_training()
-        forecast_days = int(input("Enter the number of days to predict ahead: "))
-        forecast_df = predictor.stock_prediction(forecast_days)
-        predictor.plot_machinelearning_model(forecast_df)
-    except ValueError as e:
-        print(f"Value Error: {e}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+# if __name__ == "__main__":
+#     try:
+#         stock_ticker = input("Enter the stock ticker that you would like to search up: ").upper()
+#         predictor = stockpredictor(stock_ticker)
+#         predictor.data_fetch()
+#         predictor.model_training()
+#         forecast_days = int(input("Enter the number of days to predict ahead: "))
+#         forecast_df = predictor.stock_prediction(forecast_days)
+#         predictor.plot_machinelearning_model(forecast_df)
+#     except ValueError as e:
+#         print(f"Value Error: {e}")
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
 
 
 # model, sorted_stocks = model_training(self) #THIS IS GOING TO BE SENT OUT LATER ON ***DO NOT DELETE***

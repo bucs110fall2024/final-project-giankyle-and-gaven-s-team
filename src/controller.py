@@ -7,14 +7,13 @@ from src import ui  # Import UI module for screen rendering
 class Controller:
     def __init__(self):
         pygame.init()
-
-        # Initialize variables
+        
         self.screen_width = 800
         self.screen_height = 600
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Stock Predictor")
 
-        # Load background image and scale it to the screen size
+
         self.background_image = pygame.image.load('assets/stockBackground.png')  # Ensure correct path
         self.background_image = pygame.transform.scale(self.background_image, (self.screen_width, self.screen_height))
 
@@ -135,10 +134,10 @@ class Controller:
         mouse_pos = pygame.mouse.get_pos()
 
         # Draw the background image before other UI elements
-        self.screen.blit(self.background_image, (0, 0))  # Position (0, 0) is top-left corner
+        self.screen.blit(self.background_image, (0, 0)) 
 
         if self.current_screen == "home":
-            center_x = self.screen_width // 2  # Center horizontally
+            center_x = self.screen_width // 2 
             self.ui.draw_home_screen(mouse_pos, center_x)
         elif self.current_screen == "watchlist":
             self.ui.draw_watchlist_screen(mouse_pos, self.watchlist)

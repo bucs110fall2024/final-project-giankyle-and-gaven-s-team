@@ -132,6 +132,9 @@ def draw_tutorial_screen(mouse_pos):
     # Correct button positions on the game screen
     home_button.topleft = (SCREEN_WIDTH - 170, SCREEN_HEIGHT - 70)
     end_button.topleft = (20, SCREEN_HEIGHT - 70)
+    pygame.image.load("photo1.jpg")
+    pygame.image.load("photo2.jpg")
+    pygame.display.flip()
 
 
     draw_centered_text("Game Screen", title_font, WHITE, screen, -150)
