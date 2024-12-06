@@ -32,7 +32,7 @@ class UI:
         self.screen.blit(title, (center_x - title.get_width() // 2, 50))
 
         # Draw the home screen buttons
-        self.draw_button(self.watchlist_button, "Watchlist", mouse_pos)
+        self.draw_button(self.watchlist_button, "Watchlist/Disclosure", mouse_pos)
         self.draw_button(self.your_stocks_button, "Your Stocks", mouse_pos)
         self.draw_button(self.tutorial_button, "Tutorial", mouse_pos)
         
@@ -42,8 +42,8 @@ class UI:
         self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
         self.instruction = pygame.image.load('assets/instruction.png') 
-        self.instruction = pygame.transform.smoothscale(self.instruction, (self.screen_width/1.2, self.screen_height/1.2))
-        self.screen.blit(self.instruction, (50,0)) 
+        self.instruction = pygame.transform.smoothscale(self.instruction, (self.screen_width, self.screen_height/1.2))
+        self.screen.blit(self.instruction, (0,0)) 
         pygame.display.flip()
         
 
