@@ -27,12 +27,12 @@ class UI:
         self.active = False
         self.clear_button = pygame.Rect(self.input_box.right + 10, self.screen_height // 2 + 50, self.input_box.width, 50)
 
+        self.watchlist = []
+
         # Load the background image for 'Your Stocks'
         try:
             self.background_image = pygame.image.load("assets/stockBackground.png")
-            self.background_image = pygame.transform.smoothscale(
-                self.background_image, (self.screen_width, self.screen_height)
-            )
+            self.background_image = pygame.transform.smoothscale(self.background_image, (self.screen_width, self.screen_height))
         except pygame.error:
             print("Error loading the background image for 'Your Stocks'.")
             self.background_image = None
@@ -43,7 +43,6 @@ class UI:
         self.screen.blit(title, (center_x - title.get_width() // 2, 50))
 
         # Adjusted vertical spacing for buttons
-        vertical_spacing = 60
         self.draw_button(self.watchlist_button, "Watchlist", mouse_pos)
         self.draw_button(self.your_stocks_button, "Your Stocks", mouse_pos)
         self.draw_button(self.tutorial_button, "Tutorial", mouse_pos)
@@ -110,14 +109,16 @@ class UI:
                 stock_rect = pygame.Rect(self.screen_width // 2 - 150, y_offset, 300, 50)
 
                 if stock_rect.collidepoint(mouse_pos):
-                    pygame.draw.rect(self.screen, (0, 255, 255), stock_rect)
+                    pygame.draw.rect(self.screen, (0, 255, 255), stock_rect)  # Highlight on hover
                 else:
-                    pygame.draw.rect(self.screen, (0, 0, 255), stock_rect)
+                    pygame.draw.rect(self.screen, (0, 0, 255), stock_rect)  # Normal color
 
-                pygame.draw.rect(self.screen, (0, 0, 0), stock_rect, 2)
+                pygame.draw.rect(self.screen, (0, 0, 0), stock_rect, 2)  # Button border
                 self.screen.blit(stock_text, (self.screen_width // 2 - stock_text.get_width() // 2, y_offset + 10))
-                y_offset += 60
 
+                y_offset += 60  # Increment y_offset to ensure next stock appears below
+
+        # Draw global buttons (Home and End) once, outside the loop
         self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
 
@@ -130,33 +131,32 @@ class UI:
         shadow_color = (50, 50, 50)  # Darker shadow color
         border_radius = 15  # Rounded corners radius
 
-        # Draw shadow first
+        # Draw shadow first (underneath the button)
         pygame.draw.rect(self.screen, shadow_color, button.move(shadow_offset, shadow_offset), border_radius=border_radius)
 
-        # Button hover color logic
-        if clear_button:
-            if button.collidepoint(mouse_pos):  # Only highlight when mouse is over
-                button_color = (169, 169, 169)  # Gray for Clear button on hover
+        # Determine the button color based on hover state
+        if button.collidepoint(mouse_pos):
+            if home_button:
+                button_color = (0, 255, 0)  # Green for hover on home
+            elif clear_button:
+                button_color = (211, 211, 211)  # Lighter grey for hover on clear
+            elif end_button:
+                button_color = (255, 69, 0)  # Orange-red for hover on end
             else:
-                button_color = (192, 192, 192)  # Light gray for Clear button when not hovered
-        elif button.collidepoint(mouse_pos):
-            if end_button:
-                button_color = (255, 99, 71)  # Tomato red for hover effect on End button
-            elif home_button:
-                button_color = (0, 155, 0)  # Green for hover effect on Home button
-            else:
-                button_color = (0, 255, 255)  # Cyan for hover effect on other buttons
+                button_color = (0, 255, 255)  # Light blue for other buttons
         else:
-            if end_button:
-                button_color = (255, 0, 0)  # Default red for End button when not hovered
-            elif home_button:
-                button_color = (0, 255, 0)  # Green for Home button (no hover, always green)
+            if home_button:
+                button_color = (34, 139, 34)  # Dark green for non-hover home button
+            elif clear_button:
+                button_color = (169, 169, 169)  # Grey for non-hover clear button
+            elif end_button:
+                button_color = (255, 0, 0)  # Red for non-hover end button
             else:
-                button_color = (0, 0, 255)  # Blue for other buttons
+                button_color = (0, 0, 255)  # Default blue for other buttons
 
-        # Draw the button itself with rounded corners
+        # Draw the button with its color
         pygame.draw.rect(self.screen, button_color, button, border_radius=border_radius)
+        pygame.draw.rect(self.screen, (0, 0, 0), button, 2, border_radius=border_radius)  # Button border
 
-        # Draw the text on top of the button
-        self.screen.blit(label, (button.x + (button.width - label.get_width()) // 2,
-                                 button.y + (button.height - label.get_height()) // 2))
+        # Draw text in the center of the button
+        self.screen.blit(label, (button.x + (button.width - label.get_width()) // 2, button.y + (button.height - label.get_height()) // 2))
