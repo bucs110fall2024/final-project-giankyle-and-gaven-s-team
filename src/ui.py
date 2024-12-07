@@ -1,7 +1,18 @@
 import pygame
 
 class UI:
+    '''
+    UI class for rendering and managing the graphical interface of the stock prediction
+    '''
     def __init__(self, screen, screen_width, screen_height):
+        """
+        Initialize the UI class with screen dimensions and set up graphical components.
+
+        Args:
+            screen (pygame.Surface): The display surface for rendering.
+            screen_width (int): Width of the screen in pixels.
+            screen_height (int): Height of the screen in pixels.
+        """
         self.screen = screen
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -38,7 +49,13 @@ class UI:
             self.background_image = None
 
     def draw_home_screen(self, mouse_pos, center_x):
-        """Draw the home screen with buttons."""
+        """
+        Draw the home screen with buttons and a title.
+
+        Args:
+            mouse_pos (tuple): Current mouse position (x, y).
+            center_x (int): x-coordinate of the screen's center.
+        """
         title = self.title_font.render("Stock Predictor", True, (255, 255, 255))
         self.screen.blit(title, (center_x - title.get_width() // 2, 50))
 
@@ -48,7 +65,12 @@ class UI:
         self.draw_button(self.tutorial_button, "Tutorial", mouse_pos)
 
     def draw_tutorial_screen(self, mouse_pos):
-        """Draw the tutorial screen with an image."""
+        """
+        Draw the tutorial screen, including instructions and navigation buttons.
+
+        Args:
+            mouse_pos (tuple): Current mouse position (x, y).
+        """
         self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
 
@@ -65,7 +87,17 @@ class UI:
         pygame.display.flip()
 
     def draw_your_stocks_screen(self, mouse_pos, user_input, response_message, center_x, center_y, graph_data=None):
-        """Draw the 'Your Stocks' screen with user input, response, and graph."""
+        """
+        Draw the "Your Stocks" screen with input fields, response messages, and an optional graph.
+
+        Args:
+            mouse_pos (tuple): Current mouse position (x, y).
+            user_input (str): Text entered by the user.
+            response_message (str): Response to the user's input.
+            center_x (int): X-coordinate of the screen's horizontal center.
+            center_y (int): Y-coordinate of the screen's vertical center.
+            graph_data (dict, optional): Data for rendering a stock graph.
+        """
         if self.background_image:
             self.screen.blit(self.background_image, (0, 0))
         else:
@@ -95,7 +127,13 @@ class UI:
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
 
     def draw_watchlist_screen(self, mouse_pos, watchlist):
-        """Draw the watchlist screen with the list of stocks."""
+        """
+        Draw the watchlist screen with the list of stocks and navigation buttons.
+
+        Args:
+            mouse_pos (tuple): Current mouse position (x, y).
+            watchlist (list): List of stocks to display.
+        """
         title = self.title_font.render("Watchlist", True, (255, 255, 255))
         self.screen.blit(title, (self.screen_width // 2 - title.get_width() // 2, 10))
 
@@ -123,7 +161,17 @@ class UI:
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
 
     def draw_button(self, button, text, mouse_pos, home_button=False, end_button=False, clear_button=False):
-        """Draw a button with dynamic highlights and size adjustments."""
+        """
+        Draw a button with dynamic hover effects and labels.
+
+        Args:
+            button (pygame.Rect): Rectangle defining the button area.
+            text (str): Text to display on the button.
+            mouse_pos (tuple): Current mouse position (x, y).
+            home_button (bool): Whether this button is the "Home" button.
+            end_button (bool): Whether this button is the "End" button.
+            clear_button (bool): Whether this button is the "Clear" button.
+        """
         label = self.font.render(text, True, (255, 255, 255))
 
         # Create rounded rectangle for the button with shadow effect

@@ -5,7 +5,18 @@ from src.stockprediction import stockpredictor  # Import stockpredictor class fr
 from src import ui  # Import UI module for screen rendering
 
 class Controller:
+    """
+    Controller class to manage the flow of the stock prediction application.
+    It handles user interactions, processes inputs, and updates the display.
+    """
+
     def __init__(self):
+        """
+        Initializes the controller, sets up the pygame window, background, and UI components.
+        Also initializes various variables for managing user inputs and state.
+        
+        """
+
         pygame.init()
        
         self.screen_width = 800
@@ -31,7 +42,14 @@ class Controller:
         self.ui = ui.UI(self.screen, self.screen_width, self.screen_height)
 
     def handle_user_input(self, event):
-        """Handle user inputs such as key presses and mouse clicks."""
+        """
+        Handles user inputs such as key presses and mouse clicks.
+
+
+        Args:
+           event (pygame.event): The pygame event that triggers the input (key press or mouse click).
+        """
+
         if event.type == pygame.KEYDOWN:
             if self.current_screen == "your_stocks":
                 if event.key == pygame.K_BACKSPACE:
@@ -72,7 +90,18 @@ class Controller:
                 self.response_message = "Invalid number."
 
     def validate_stock_ticker(self, ticker):
-        """Validate if the stock ticker is valid."""
+        """
+        Validates if the stock ticker exists by checking its market price.
+
+
+        Args:
+           ticker (str): The stock ticker to validate.
+
+
+        Returns:
+           bool: True if the ticker exists and has a market price, False otherwise.
+        """
+
         try:
             data = yf.download(ticker, period="1d")
             return not data.empty
@@ -92,7 +121,14 @@ class Controller:
         self.user_input = ""  # Clear user input after prediction
 
     def handle_home_screen_buttons(self, pos):
-        """Handle button clicks on the home screen."""
+        """
+        Handles button clicks on the home screen.
+
+
+        Args:
+           pos (tuple): The position of the mouse click (x, y).
+        """
+
         if self.ui.tutorial_button.collidepoint(pos):
             self.current_screen = "tutorial"
         elif self.ui.watchlist_button.collidepoint(pos):
@@ -101,7 +137,14 @@ class Controller:
             self.current_screen = "your_stocks"
 
     def handle_watchlist_buttons(self, pos):
-        """Handle button clicks on the watchlist screen."""
+        """
+        Handles button clicks on the watchlist screen.
+
+
+        Args:
+           pos (tuple): The position of the mouse click (x, y).
+        """
+
         if self.ui.home_button.collidepoint(pos):
             self.current_screen = "home"
         elif self.ui.end_button.collidepoint(pos):
@@ -115,7 +158,14 @@ class Controller:
                 self.revisit_stock(stock, days)
 
     def handle_tutorial_buttons(self, pos):
-        """Handle button clicks on the tutorial screen."""
+        """
+        Handles button clicks on the tutorial screen.
+
+
+        Args:
+           pos (tuple): The position of the mouse click (x, y).
+        """
+
         if self.ui.home_button.collidepoint(pos):
             self.current_screen = "home"
         elif self.ui.end_button.collidepoint(pos):
@@ -123,7 +173,14 @@ class Controller:
             sys.exit()
 
     def handle_your_stocks_buttons(self, pos):
-        """Handle button clicks on the 'Your Stocks' screen."""
+        """
+        Handles button clicks on the your stocks screen.
+
+
+        Args:
+           pos (tuple): The position of the mouse click (x, y).
+        """
+
         if self.ui.home_button.collidepoint(pos):
             self.current_screen = "home"
         elif self.ui.end_button.collidepoint(pos):
@@ -141,7 +198,12 @@ class Controller:
         self.predict_stock()
 
     def update(self):
-        """Update the screen based on the current screen."""
+        """
+        Updates the display based on the current screen.
+
+        Draws the right screen based on the current state of the program.
+        """
+
         mouse_pos = pygame.mouse.get_pos()
 
         # Draw the background image before other UI elements
