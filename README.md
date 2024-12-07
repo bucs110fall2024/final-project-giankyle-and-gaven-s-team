@@ -31,10 +31,10 @@ This game will be a stock predictor where it incorporates where it provides you 
 ## Program Design
 
 ### Additional Libraries
-1.yfinance
-2.pandas
-3.matplotlib
-4.sklearn
+1. yfinance
+2. pandas
+3. matplotlib
+4. sklearn
 
 ### Features
 
@@ -42,7 +42,7 @@ This game will be a stock predictor where it incorporates where it provides you 
 2. Predicts stock over period of time 
 3. Saved stocks for future references
 4. Buttons for each stock that was inputted
-5. Top stocks of each da 
+5. Tutorial page 
 
 ### Classes
 - controller.py
