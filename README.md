@@ -22,7 +22,10 @@ This game will be a stock predictor where it incorporates where it provides you 
 
 ### Final Design
 
-![final gui](assets/finalgui1.jpg)(assets/finalgui2.jpg)(assets/finalgui3.jpg)(assets/finalgui4.jpg)
+![final gui](assets/finalgui1.jpg),
+(assets/finalgui2.jpg),
+(assets/finalgui3.jpg),
+(assets/finalgui4.jpg)
 
 
 ## Program Design
