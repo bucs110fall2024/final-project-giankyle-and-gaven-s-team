@@ -30,6 +30,12 @@ This game will be a stock predictor where it incorporates where it provides you 
 
 ## Program Design
 
+### Additional Libraries
+yfinance
+pandas
+matplotlib
+sklearn
+
 ### Features
 
 1. Home Gui
