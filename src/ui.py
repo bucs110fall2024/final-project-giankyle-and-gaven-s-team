@@ -17,22 +17,19 @@ class UI:
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.button_padding = 20  # Padding around button text
+        self.button_padding = 20  
         self.font = pygame.font.Font(None, 36)
-        self.title_font = pygame.font.Font(None, 72)  # Larger font for titles
+        self.title_font = pygame.font.Font(None, 72) 
 
-        # Set a fixed button width and height
         self.button_width = 150
         self.button_height = 50
 
-        # Button definitions (adjusted for placement)
         self.home_button = pygame.Rect(self.screen_width - 170, self.screen_height - 95, self.button_width, self.button_height)
         self.end_button = pygame.Rect(20, self.screen_height - 95, self.button_width, self.button_height)
         self.watchlist_button = pygame.Rect(self.screen_width // 2 - self.button_width // 2, 200, self.button_width, self.button_height)
         self.your_stocks_button = pygame.Rect(self.screen_width // 2 - self.button_width // 2, 300, self.button_width, self.button_height)
         self.tutorial_button = pygame.Rect(self.screen_width // 2 - self.button_width // 2, 400, self.button_width, self.button_height)
 
-        # Input box and text handling
         self.input_box = pygame.Rect(self.screen_width // 2 - 100, self.screen_height // 2 + 50, 200, 50)
         self.input_text = ""
         self.active = False
@@ -40,7 +37,6 @@ class UI:
 
         self.watchlist = []
 
-        # Load the background image for 'Your Stocks'
         try:
             self.background_image = pygame.image.load("assets/stockBackground.png")
             self.background_image = pygame.transform.smoothscale(self.background_image, (self.screen_width, self.screen_height))
@@ -59,7 +55,6 @@ class UI:
         title = self.title_font.render("Stock Predictor", True, (255, 255, 255))
         self.screen.blit(title, (center_x - title.get_width() // 2, 50))
 
-        # Adjusted vertical spacing for buttons
         self.draw_button(self.watchlist_button, "Watchlist", mouse_pos)
         self.draw_button(self.your_stocks_button, "Your Stocks", mouse_pos)
         self.draw_button(self.tutorial_button, "Tutorial", mouse_pos)
@@ -147,16 +142,15 @@ class UI:
                 stock_rect = pygame.Rect(self.screen_width // 2 - 150, y_offset, 300, 50)
 
                 if stock_rect.collidepoint(mouse_pos):
-                    pygame.draw.rect(self.screen, (0, 255, 255), stock_rect)  # Highlight on hover
+                    pygame.draw.rect(self.screen, (0, 255, 255), stock_rect)  
                 else:
-                    pygame.draw.rect(self.screen, (0, 0, 255), stock_rect)  # Normal color
+                    pygame.draw.rect(self.screen, (0, 0, 255), stock_rect) 
 
-                pygame.draw.rect(self.screen, (0, 0, 0), stock_rect, 2)  # Button border
+                pygame.draw.rect(self.screen, (0, 0, 0), stock_rect, 2)  
                 self.screen.blit(stock_text, (self.screen_width // 2 - stock_text.get_width() // 2, y_offset + 10))
 
-                y_offset += 60  # Increment y_offset to ensure next stock appears below
+                y_offset += 60  
 
-        # Draw global buttons (Home and End) once, outside the loop
         self.draw_button(self.home_button, "Home", mouse_pos, home_button=True)
         self.draw_button(self.end_button, "End", mouse_pos, end_button=True)
 
@@ -174,37 +168,32 @@ class UI:
         """
         label = self.font.render(text, True, (255, 255, 255))
 
-        # Create rounded rectangle for the button with shadow effect
-        shadow_offset = 5  # Shadow offset
-        shadow_color = (50, 50, 50)  # Darker shadow color
-        border_radius = 15  # Rounded corners radius
+        shadow_offset = 5 
+        shadow_color = (50, 50, 50)  
+        border_radius = 15 
 
-        # Draw shadow first (underneath the button)
         pygame.draw.rect(self.screen, shadow_color, button.move(shadow_offset, shadow_offset), border_radius=border_radius)
 
-        # Determine the button color based on hover state
         if button.collidepoint(mouse_pos):
             if home_button:
-                button_color = (0, 255, 0)  # Green for hover on home
+                button_color = (0, 255, 0) 
             elif clear_button:
-                button_color = (211, 211, 211)  # Lighter grey for hover on clear
+                button_color = (211, 211, 211) 
             elif end_button:
-                button_color = (255, 69, 0)  # Orange-red for hover on end
-            else:
-                button_color = (0, 255, 255)  # Light blue for other buttons
+                button_color = (255, 69, 0) 
+                
+                button_color = (0, 255, 255) 
         else:
             if home_button:
-                button_color = (34, 139, 34)  # Dark green for non-hover home button
+                button_color = (34, 139, 34)  
             elif clear_button:
-                button_color = (169, 169, 169)  # Grey for non-hover clear button
+                button_color = (169, 169, 169)  
             elif end_button:
-                button_color = (255, 0, 0)  # Red for non-hover end button
+                button_color = (255, 0, 0) 
             else:
-                button_color = (0, 0, 255)  # Default blue for other buttons
+                button_color = (0, 0, 255)  
 
-        # Draw the button with its color
         pygame.draw.rect(self.screen, button_color, button, border_radius=border_radius)
-        pygame.draw.rect(self.screen, (0, 0, 0), button, 2, border_radius=border_radius)  # Button border
+        pygame.draw.rect(self.screen, (0, 0, 0), button, 2, border_radius=border_radius) 
 
-        # Draw text in the center of the button
         self.screen.blit(label, (button.x + (button.width - label.get_width()) // 2, button.y + (button.height - label.get_height()) // 2))

@@ -1,8 +1,8 @@
 import pygame
 import sys
 import yfinance as yf
-from src.stockprediction import stockpredictor  # Import stockpredictor class from stockprediction.py
-from src import ui  # Import UI module for screen rendering
+from src.stockprediction import stockpredictor  
+from src import ui 
 
 class Controller:
     """
@@ -24,21 +24,20 @@ class Controller:
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Stock Predictor")
 
-        self.background_image = pygame.image.load('assets/stockBackground.png')  # Ensure correct path
+        self.background_image = pygame.image.load('assets/stockBackground.png')  
         self.background_image = pygame.transform.scale(self.background_image, (self.screen_width, self.screen_height))
 
         self.current_screen = "home"
         self.user_input = ""
         self.response_message = ""
         self.current_question = "stock_ticker"
-        self.watchlist = []  # List to store watchlist items
+        self.watchlist = []  
         self.ticker = None
         self.forecast_days = None
         self.selected_stock = None
         self.selected_days = None
-        self.show_graph = False  # Flag to show the graph when a stock is selected
+        self.show_graph = False  
 
-        # Initialize UI
         self.ui = ui.UI(self.screen, self.screen_width, self.screen_height)
 
     def handle_user_input(self, event):
@@ -53,11 +52,11 @@ class Controller:
         if event.type == pygame.KEYDOWN:
             if self.current_screen == "your_stocks":
                 if event.key == pygame.K_BACKSPACE:
-                    self.user_input = self.user_input[:-1]  # Remove the last character
+                    self.user_input = self.user_input[:-1]  
                 elif event.key == pygame.K_RETURN:
-                    self.process_user_input()  # Process user input on Enter key press
+                    self.process_user_input()  
                 else:
-                    self.user_input += event.unicode  # Add the typed character to user_input
+                    self.user_input += event.unicode  
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self.current_screen == "home":
@@ -118,7 +117,7 @@ class Controller:
         self.watchlist.append((self.ticker, self.forecast_days))
         self.response_message = f"Added {self.ticker} to watchlist."
         self.current_question = "stock_ticker"
-        self.user_input = ""  # Clear user input after prediction
+        self.user_input = ""  
 
     def handle_home_screen_buttons(self, pos):
         """
@@ -151,7 +150,6 @@ class Controller:
             pygame.quit()
             sys.exit()
 
-        # Add the handling for clicking the stock buttons
         for idx, (stock, days) in enumerate(self.watchlist):
             button_rect = pygame.Rect(self.screen_width // 2 - 100, 150 + idx * 60, 200, 50)
             if button_rect.collidepoint(pos):
@@ -206,14 +204,13 @@ class Controller:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        # Draw the background image before other UI elements
         self.screen.blit(self.background_image, (0, 0))
 
         if self.current_screen == "home":
             center_x = self.screen_width // 2
             self.ui.draw_home_screen(mouse_pos, center_x)
         elif self.current_screen == "watchlist":
-            self.ui.draw_watchlist_screen(mouse_pos, self.watchlist)  # Pass watchlist to render
+            self.ui.draw_watchlist_screen(mouse_pos, self.watchlist)  
         elif self.current_screen == "tutorial":
             self.ui.draw_tutorial_screen(mouse_pos)
         elif self.current_screen == "your_stocks":

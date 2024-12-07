@@ -35,18 +35,14 @@ This game will be a stock predictor where it incorporates where it provides you 
 5. Top stocks of each da 
 
 ### Classes
+- controller.py
+- Description: This is the main controller for the overall flow of the stock prediction.
 
-- gui_base.py 
-- Description:Handles the features of each foundation of each screen gui
+- stockprediction.py 
+- Description: This is a class that predicts stock prices using historical data and linear regression
 
-- watchlist_screen.py
-- Description:It consists of the saved stocks the user inputted to reference later when they want to relook at a specific stock
-
-- your_stocks_screen.py
-- Description:This is the user input of the stock they want to see and the amount of days they want to foresee in the future, and a graph will be generated from it
-
-- home_screen.py
-- Description:This is the home gui to navigate through the other secondary screens of the project
+- ui.py
+- Description: This class does the rendering and managing the graphical interface of the stock prediction
 
 ## ATP
 
