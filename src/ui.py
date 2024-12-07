@@ -181,8 +181,8 @@ class UI:
                 button_color = (211, 211, 211) 
             elif end_button:
                 button_color = (255, 69, 0) 
-                
-                button_color = (0, 255, 255) 
+            
+                #button_color = (0, 255, 255) 
         else:
             if home_button:
                 button_color = (34, 139, 34)  
