@@ -168,32 +168,32 @@ class UI:
         """
         label = self.font.render(text, True, (255, 255, 255))
 
-        shadow_offset = 5 
-        shadow_color = (50, 50, 50)  
-        border_radius = 15 
+        shadow_offset = 5
+        shadow_color = (50, 50, 50)
+        border_radius = 15
 
         pygame.draw.rect(self.screen, shadow_color, button.move(shadow_offset, shadow_offset), border_radius=border_radius)
 
         if button.collidepoint(mouse_pos):
             if home_button:
-                button_color = (0, 255, 0) 
+                button_color = (0, 255, 0)
             elif clear_button:
-                button_color = (211, 211, 211) 
+                button_color = (211, 211, 211)
             elif end_button:
-                button_color = (255, 69, 0) 
-                
-                button_color = (0, 255, 255) 
+                button_color = (255, 69, 0)
+            else:
+                button_color = (0, 255, 255)
         else:
             if home_button:
-                button_color = (34, 139, 34)  
+                button_color = (34, 139, 34)
             elif clear_button:
-                button_color = (169, 169, 169)  
+                button_color = (169, 169, 169)
             elif end_button:
-                button_color = (255, 0, 0) 
+                button_color = (255, 0, 0)
             else:
-                button_color = (0, 0, 255)  
+                button_color = (0, 0, 255)
 
         pygame.draw.rect(self.screen, button_color, button, border_radius=border_radius)
-        pygame.draw.rect(self.screen, (0, 0, 0), button, 2, border_radius=border_radius) 
+        pygame.draw.rect(self.screen, (0, 0, 0), button, 2, border_radius=border_radius)
 
         self.screen.blit(label, (button.x + (button.width - label.get_width()) // 2, button.y + (button.height - label.get_height()) // 2))
