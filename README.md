@@ -31,10 +31,10 @@ This game will be a stock predictor where it incorporates where it provides you 
 ## Program Design
 
 ### Additional Libraries
-yfinance
-pandas
-matplotlib
-sklearn
+1.yfinance
+2.pandas
+3.matplotlib
+4.sklearn
 
 ### Features
 
